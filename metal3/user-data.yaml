@@ -1,0 +1,7 @@
+#cloud-config
+users: 
+- name: user
+  sudo: ALL=(ALL) NOPASSWD:ALL
+  groups: [wheel]
+  ssh_authorized_keys:
+  - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKdqP+id76O+kM8pnm8cywFBU236CdBwRh5zrvVUwexr asher@fedora

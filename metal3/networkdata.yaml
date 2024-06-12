@@ -1,0 +1,14 @@
+network:
+  version: 1
+  config:
+    - type: physical
+      name: eno1
+      subnets:
+        - type: static
+          address: 10.40.0.200/16
+          gateway: 10.40.0.1
+    - type: nameserver
+      address:
+        - 8.8.8.8
+        - 1.1.1.1
+

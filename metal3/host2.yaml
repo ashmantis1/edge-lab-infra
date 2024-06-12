@@ -1,0 +1,21 @@
+apiVersion: metal3.io/v1alpha1
+kind: BareMetalHost
+metadata:
+  name: host2
+spec:
+  online: true
+  bootMACAddress: 6c:2b:59:f3:7d:25
+  bootMode: legacy  #UEFI  # use 'legacy' for Scenario 2
+  bmc:
+    address: redfish+http://10.30.0.3:8000/redfish/v1/Systems/cluster-powerctrl-2
+    credentialsName: bml-02
+  rootDeviceHints: 
+    minSizeGigabytes: 10
+  userData: 
+    name: cloud-init-updates
+    namespace: baremetal-operator-system
+  image:
+    checksumType: sha256
+    checksum: http://10.40.0.4/SHA256SUMS
+    format: qcow2
+    url: http://10.40.0.4/debian-12-generic-amd64.qcow2
