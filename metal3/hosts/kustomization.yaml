@@ -1,0 +1,6 @@
+resources: 
+  - m920q-ec.yaml
+  - m920q-cb.yaml
+  - m920q-de.yaml
+  - 3060-22.yaml
+  - 3060-25.yaml

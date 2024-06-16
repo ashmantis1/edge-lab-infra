@@ -34,7 +34,7 @@ patches:
 - patch: |-
     - op: replace
       path: /spec/ipAddresses/0
-      value: 10.40.0.20
+      value: 10.40.0.10
     - op: add
       path: /spec/ipAddresses/-
       value: 172.18.0.2

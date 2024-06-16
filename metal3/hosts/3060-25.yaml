@@ -1,0 +1,26 @@
+apiVersion: metal3.io/v1alpha1
+kind: BareMetalHost
+metadata:
+  name: 3060-25
+  labels: 
+    role: worker
+spec:
+  online: true
+  bootMACAddress: 6c:2b:59:f3:7d:25
+  bootMode: legacy  #UEFI  # use 'legacy' for Scenario 2
+  bmc:
+    address: redfish+http://10.40.0.10:8080/redfish/v1/Systems/3060-25
+    credentialsName: bml-02
+  rootDeviceHints: 
+  #    deviceName: /dev/sda
+  #model: "Micron 1100 SATA 256GB"
+    model: "CT500MX500SSD1"
+    minSizeGigabytes: 10
+  userData: 
+    name: cloud-init-updates
+    namespace: baremetal-operator-system
+    #image:
+    #  checksumType: sha256
+    #  checksum: http://10.40.0.4/SHA256SUMS
+    #  format: qcow2
+    #  url: http://10.40.0.4/debian-12-generic-amd64.qcow2

@@ -1,0 +1,248 @@
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  name: my-cluster
+  namespace: baremetal-operator-system
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+      - 192.168.0.0/18
+    services:
+      cidrBlocks:
+      - 10.96.0.0/12
+  controlPlaneRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: KubeadmControlPlane
+    name: my-cluster
+    namespace: baremetal-operator-system
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+    kind: Metal3Cluster
+    name: my-cluster
+    namespace: baremetal-operator-system
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: Metal3Cluster
+metadata:
+  name: my-cluster
+  namespace: baremetal-operator-system
+spec:
+  controlPlaneEndpoint:
+    host: 10.40.2.100
+    port: 6443
+  noCloudProvider: true
+---
+apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+kind: KubeadmControlPlane
+metadata:
+  name: my-cluster
+  namespace: baremetal-operator-system
+spec:
+  kubeadmConfigSpec:
+    initConfiguration:
+      nodeRegistration:
+        kubeletExtraArgs:
+          node-labels: metal3.io/uuid={{ ds.meta_data.uuid }}
+        name: '{{ ds.meta_data.name }}'
+    joinConfiguration:
+      controlPlane: {}
+      nodeRegistration:
+        kubeletExtraArgs:
+          node-labels: metal3.io/uuid={{ ds.meta_data.uuid }}
+        name: '{{ ds.meta_data.name }}'
+    users:
+    - name: user
+      sshAuthorizedKeys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGbzcb23L5wG+IUtsr9ic1MMZPm+bMhlVX6SB2OuaeS9
+        asher@infra-kube-1
+      sudo: ALL=(ALL) NOPASSWD:ALL
+    postKubeadmCommands:
+      - "sed -i 's#path: /etc/kubernetes/super-admin.conf#path: /etc/kubernetes/admin.conf#' /etc/kubernetes/manifests/kube-vip.yaml"
+    files: 
+      - path: /etc/kubernetes/manifests/kube-vip.yaml
+        content: | 
+            apiVersion: v1
+            kind: Pod
+            metadata:
+              creationTimestamp: null
+              name: kube-vip
+              namespace: kube-system
+            spec:
+              containers:
+              - args:
+                - manager
+                env:
+                - name: vip_arp
+                  value: "true"
+                - name: port
+                  value: "6443"
+                - name: vip_interface
+                  value: eth0
+                - name: vip_cidr
+                  value: "32"
+                - name: cp_enable
+                  value: "true"
+                - name: cp_namespace
+                  value: kube-system
+                - name: vip_ddns
+                  value: "false"
+                - name: svc_enable
+                  value: "true"
+                - name: vip_leaderelection
+                  value: "true"
+                - name: vip_leaseduration
+                  value: "5"
+                - name: vip_renewdeadline
+                  value: "3"
+                - name: vip_retryperiod
+                  value: "1"
+                - name: address
+                  value: 10.40.2.100
+                image: ghcr.io/kube-vip/kube-vip:v0.4.0
+                imagePullPolicy: Always
+                name: kube-vip
+                resources: {}
+                securityContext:
+                  capabilities:
+                    add:
+                    - NET_ADMIN
+                    - NET_RAW
+                    - SYS_TIME
+                volumeMounts:
+                - mountPath: /etc/kubernetes/admin.conf
+                  name: kubeconfig
+              hostAliases:
+              - hostnames:
+                - kubernetes
+                ip: 127.0.0.1
+              hostNetwork: true
+              volumes:
+              - hostPath:
+                  path: /etc/kubernetes/super-admin.conf
+                name: kubeconfig
+  machineTemplate:
+    infrastructureRef:
+      apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+      kind: Metal3MachineTemplate
+      name: my-cluster-controlplane
+      namespace: baremetal-operator-system
+    nodeDrainTimeout: 0s
+  replicas: 3
+  rolloutStrategy:
+    rollingUpdate:
+      maxSurge: 1
+    type: RollingUpdate
+  version: v1.29.0
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: Metal3MachineTemplate
+metadata:
+  name: my-cluster-controlplane
+  namespace: baremetal-operator-system
+spec:
+  nodeReuse: false
+  template:
+    spec:
+      automatedCleaningMode: metadata
+      hostSelector: 
+        matchLabels: 
+          role: master
+      dataTemplate:
+        name: my-cluster-controlplane-template
+      image:
+        checksum: ab54897a1bcae83581512cdeeda787f009846cfd7a63b298e472c1bd6c522d23
+        checksumType: sha256
+        format: qcow2
+        url: http://10.40.0.4/CENTOS_9_NODE_IMAGE_K8S_v1.29.0.qcow2
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: MachineDeployment
+metadata:
+  labels:
+    cluster.x-k8s.io/cluster-name: my-cluster
+    nodepool: nodepool-0
+  name: my-cluster
+  namespace: baremetal-operator-system
+spec:
+  clusterName: my-cluster
+  replicas: 2
+  selector:
+    matchLabels:
+      cluster.x-k8s.io/cluster-name: my-cluster
+      nodepool: nodepool-0
+  template:
+    metadata:
+      labels:
+        cluster.x-k8s.io/cluster-name: my-cluster
+        nodepool: nodepool-0
+    spec:
+      bootstrap:
+        configRef:
+          apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+          kind: KubeadmConfigTemplate
+          name: my-cluster-workers
+      clusterName: my-cluster
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+        kind: Metal3MachineTemplate
+        name: my-cluster-workers
+      nodeDrainTimeout: 0s
+      version: v1.29.0
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: Metal3MachineTemplate
+metadata:
+  name: my-cluster-workers
+  namespace: baremetal-operator-system
+spec:
+  nodeReuse: false
+  template:
+    spec:
+      automatedCleaningMode: metadata
+      hostSelector: 
+        matchLabels: 
+          role: worker
+      dataTemplate:
+        name: my-cluster-workers-template
+      image:
+        checksum: ab54897a1bcae83581512cdeeda787f009846cfd7a63b298e472c1bd6c522d23
+        checksumType: sha256
+        format: qcow2
+        url: http://10.40.0.4/CENTOS_9_NODE_IMAGE_K8S_v1.29.0.qcow2
+---
+apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+kind: KubeadmConfigTemplate
+metadata:
+  name: my-cluster-workers
+  namespace: baremetal-operator-system
+spec:
+  template:
+    spec:
+      joinConfiguration:
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: metal3.io/uuid={{ ds.meta_data.uuid }}
+          name: '{{ ds.meta_data.name }}'
+      users:
+      - name: user
+        sshAuthorizedKeys:
+        - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGbzcb23L5wG+IUtsr9ic1MMZPm+bMhlVX6SB2OuaeS9
+          asher@infra-kube-1
+        sudo: ALL=(ALL) NOPASSWD:ALL
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: Metal3DataTemplate
+metadata:
+  name: my-cluster-controlplane-template
+  namespace: baremetal-operator-system
+spec:
+  clusterName: my-cluster
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: Metal3DataTemplate
+metadata:
+  name: my-cluster-workers-template
+  namespace: baremetal-operator-system
+spec:
+  clusterName: my-cluster
