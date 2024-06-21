@@ -1,0 +1,93 @@
+- hosts: localhost 
+  name: Build and deploy docker image 
+  become: yes
+  vars: 
+    k8s_version: 1.30.1
+    image_name: kube-node-image
+    image_repository: localhost
+    image_path: "./images"
+    qcow2_rootfs: xfs
+    webserver_port: 8080
+  tasks: 
+      
+    - name: Template all configuration
+      ansible.builtin.template: 
+        src: "{{ item }}" 
+        dest: "./files/{{ item | basename | regex_replace('\\.j2$', '') }}"
+      with_fileglob: 
+        - ./templates/*.j2
+
+    - name: Build and tag image
+      containers.podman.podman_image: 
+        name: "{{ image_repository }}/{{ image_name }}" 
+        tag: "{{ k8s_version }}"
+        path: ./
+        build: 
+          extra_args: "--build-arg K8S_VERSION={{ k8s_version }}"
+
+    - name: Create temporary output directory
+      ansible.builtin.tempfile: 
+        state: directory
+        suffix: -output
+      register: output_dir
+
+    - name: Run bootc image builder
+      containers.podman.podman_container: 
+        name: bootc-builder 
+        image: quay.io/centos-bootc/bootc-image-builder:latest
+        volume: 
+          - ./config.toml:/config.toml
+          - "{{ output_dir.path }}:/output"
+          - /var/lib/containers/storage:/var/lib/containers/storage
+        privileged: true
+        remove: true
+        detach: false
+        security_opt: 
+          - "label=type:unconfined_t"
+        command: "--type qcow2 --local --rootfs {{ qcow2_rootfs }} {{ image_repository }}/{{ image_name }}:{{ k8s_version }}"
+
+    
+    - name: Move qcow2 to images directory
+      ansible.builtin.command: "mv {{ output_dir.path }}/qcow2/disk.qcow2 {{ image_path }}/{{ image_name }}-v{{ k8s_version }}.qcow2"
+      #ansible.builtin.copy: 
+      #  src: "{{ output_dir.path }}/qcow2/disk.qcow2" 
+      #  dest: "{{ image_path }}/{{ image_name }}-v{{ k8s_version }}.qcow2"
+
+    - name: Get checksum of image 
+      ansible.builtin.stat: 
+        path: "{{ image_path }}/{{ image_name }}-v{{ k8s_version }}.qcow2"
+        checksum_algorithm: sha256 
+      register: checksum
+      tags: sha
+
+    - name: Create checksum file 
+      ansible.builtin.file: 
+        path: "{{ image_path}}/SHA256SUM" 
+        state: touch
+      tags: sha
+
+    - name: Add checksum to file
+      ansible.builtin.lineinfile: 
+        path: "{{ image_path }}/SHA256SUM"
+        line: "{{ checksum.stat.checksum }} *{{ image_name }}-v{{ k8s_version }}.qcow2"
+      tags: sha
+    
+    - name: Delete tmp directory 
+      ansible.builtin.file: 
+        path: "{{ output_dir.path }}" 
+        state: absent
+
+    - name: Run nginx webserver to serve images 
+      containers.podman.podman_container: 
+        name: image_server
+        image: docker.io/nginxinc/nginx-unprivileged:latest
+        recreate: true
+        ports: 
+          - "{{ webserver_port }}:8080"
+        volumes: 
+          - "{{ image_path }}:/usr/share/nginx/html:Z"
+        remove: false
+      tags: webserver
+        
+
+

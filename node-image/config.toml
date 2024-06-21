@@ -1,0 +1,5 @@
+[[customizations.user]]
+name = "user"
+password = "password"
+key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGbzcb23L5wG+IUtsr9ic1MMZPm+bMhlVX6SB2OuaeS9 asher@infra-kube-1"
+groups = ["wheel"]

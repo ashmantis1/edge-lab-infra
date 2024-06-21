@@ -1,0 +1,42 @@
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: Metal3MachineTemplate
+metadata:
+  name: kube-cluster-v1.30.2-controlplane
+  namespace: baremetal-operator-system
+spec:
+  nodeReuse: true
+  template:
+    spec:
+      automatedCleaningMode: metadata
+      hostSelector:
+        matchLabels:
+          role: master
+      dataTemplate:
+        name: kube-cluster-controlplane-template
+      image:
+        checksum: http://10.40.0.10:8080/SHA256SUM
+        checksumType: sha256
+        format: qcow2
+        url: http://10.40.0.10:8080/kube-node-image-v1.30.2.qcow2
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: Metal3MachineTemplate
+metadata:
+  name: kube-cluster-v1.30.2-workers
+  namespace: baremetal-operator-system
+spec:
+  nodeReuse: true
+  template:
+    spec:
+      automatedCleaningMode: metadata
+      hostSelector: 
+        matchLabels: 
+          role: worker
+      dataTemplate:
+        name: kube-cluster-workers-template
+      image:
+        checksum: http://10.40.0.10:8080/SHA256SUM
+        checksumType: sha256
+        format: qcow2
+        url: http://10.40.0.10:8080/kube-node-image-v1.30.2.qcow2
