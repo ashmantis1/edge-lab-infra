@@ -5,7 +5,7 @@ namespace: baremetal-operator-system
 # paths if you do not want to access them over the network.
 # Note that the ref=v0.5.1 specifies the version to use.
 resources:
-- https://github.com/metal3-io/baremetal-operator/config/namespace?ref=v0.5.1
+  #- https://github.com/metal3-io/baremetal-operator/config/namespace?ref=v0.5.1
 - https://github.com/metal3-io/baremetal-operator/ironic-deployment/base?ref=v0.5.1
 # The kustomize components configure basic-auth and TLS
 components:
@@ -18,7 +18,7 @@ images:
 # This ConfigMap will be used to set environment variables for the containers.
 configMapGenerator:
 - envs:
-  - ironic_bmo.env
+  - ./config/ironic_bmo.env
   name: ironic-bmo-configmap
   behavior: create
 
@@ -55,14 +55,14 @@ secretGenerator:
 - name: ironic-htpasswd
   behavior: create
   envs:
-  - ironic-htpasswd
+  - ./secrets/ironic-htpasswd
 - name: ironic-inspector-htpasswd
   behavior: create
   envs:
-  - ironic-inspector-htpasswd
+  - ./secrets/ironic-inspector-htpasswd
 - name: ironic-auth-config
   files:
-  - auth-config=ironic-auth-config
+  - auth-config=./secrets/ironic-auth-config
 - name: ironic-inspector-auth-config
   files:
-  - auth-config=ironic-inspector-auth-config
+  - auth-config=./secrets/ironic-inspector-auth-config

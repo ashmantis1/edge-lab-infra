@@ -1,0 +1,15 @@
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: Metal3DataTemplate
+metadata:
+  name: kube-cluster-controlplane-template
+  namespace: baremetal-operator-system
+spec:
+  clusterName: kube-cluster
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: Metal3DataTemplate
+metadata:
+  name: kube-cluster-workers-template
+  namespace: baremetal-operator-system
+spec:
+  clusterName: kube-cluster
