@@ -1,0 +1,23 @@
+apiVersion: metal3.io/v1alpha1
+kind: BareMetalHost
+metadata:
+  name: m920q-ec
+  labels: 
+    role: master
+spec:
+  online: false
+  bootMACAddress: 98:fa:9b:fc:5e:ec
+  bootMode: legacy
+  bmc:
+    address: redfish+http://10.43.51.158/redfish/v1/Systems/m920q-ec
+    credentialsName: bml-01
+  rootDeviceHints: 
+    minSizeGigabytes: 10
+  userData: 
+    name: cloud-init-updates
+    namespace: baremetal-operator-system
+    #  image:
+    #    checksumType: sha256
+    #    checksum: http://10.40.0.4/SHA256SUMS
+    #    format: qcow2
+    #    url: http://10.40.0.4/debian-12-generic-amd64.qcow2

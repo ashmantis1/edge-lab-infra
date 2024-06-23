@@ -4,6 +4,7 @@ namespace: baremetal-prod
 resources: 
   - namespace.yaml
   - ../../../bases/kubeadm
+  - hosts.yaml
 
 patches: 
 - target: 
