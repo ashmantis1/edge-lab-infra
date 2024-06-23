@@ -2,10 +2,12 @@
   name: Build and deploy docker image 
   become: yes
   vars: 
-    k8s_version: 1.30.1
+    k8s_version: 1.30.2
     image_name: kube-node-image
     image_repository: localhost
     image_path: "./images"
+    image_type: qcow2
+    rootfs_size: 100
     qcow2_rootfs: xfs
     webserver_port: 8080
   tasks: 
@@ -22,12 +24,14 @@
         name: "{{ image_repository }}/{{ image_name }}" 
         tag: "{{ k8s_version }}"
         path: ./
+        force: true
         build: 
           extra_args: "--build-arg K8S_VERSION={{ k8s_version }}"
 
     - name: Create temporary output directory
       ansible.builtin.tempfile: 
         state: directory
+        path: ./temp
         suffix: -output
       register: output_dir
 
@@ -44,18 +48,29 @@
         detach: false
         security_opt: 
           - "label=type:unconfined_t"
-        command: "--type qcow2 --local --rootfs {{ qcow2_rootfs }} {{ image_repository }}/{{ image_name }}:{{ k8s_version }}"
+        command: "--type {{ image_type }} --local --rootfs {{ qcow2_rootfs }} {{ image_repository }}/{{ image_name }}:{{ k8s_version }}"
 
     
+    - name: Create image path variable 
+      ansible.builtin.set_fact: 
+        full_image_path: "{{ image_path }}/{{ image_name }}-v{{ k8s_version }}.{{ image_type }}"
+      tags: always
+
     - name: Move qcow2 to images directory
-      ansible.builtin.command: "mv {{ output_dir.path }}/qcow2/disk.qcow2 {{ image_path }}/{{ image_name }}-v{{ k8s_version }}.qcow2"
-      #ansible.builtin.copy: 
-      #  src: "{{ output_dir.path }}/qcow2/disk.qcow2" 
-      #  dest: "{{ image_path }}/{{ image_name }}-v{{ k8s_version }}.qcow2"
+      ansible.builtin.command: "mv {{ output_dir.path }}/qcow2/disk.qcow2 {{ full_image_path }}"
+      when: image_type == "qcow2" 
+
+    - name: Move raw to images directory
+      ansible.builtin.command: "mv {{ output_dir.path }}/image/disk.raw {{ full_image_path }}"
+      when: image_type == "raw" 
+      
+    - name: Resize QCOW2 to rootfs_size value 
+      ansible.builtin.command: "qemu-img resize {{ full_image_path }} {{ rootfs_size }}G"
+      when: image_type == "qcow2"
 
     - name: Get checksum of image 
       ansible.builtin.stat: 
-        path: "{{ image_path }}/{{ image_name }}-v{{ k8s_version }}.qcow2"
+        path: "{{ full_image_path }}"
         checksum_algorithm: sha256 
       register: checksum
       tags: sha
@@ -69,7 +84,8 @@
     - name: Add checksum to file
       ansible.builtin.lineinfile: 
         path: "{{ image_path }}/SHA256SUM"
-        line: "{{ checksum.stat.checksum }} *{{ image_name }}-v{{ k8s_version }}.qcow2"
+        line: "{{ checksum.stat.checksum }} *{{ image_name }}-v{{ k8s_version }}.{{ image_type }}"
+        regexp: '^.* \*{{ image_name }}-v{{ k8s_version }}.{{ image_type }}$'
       tags: sha
     
     - name: Delete tmp directory 

@@ -1,0 +1,12 @@
+#!/bin/bash
+part_to_grow=4
+root_part=$(findmnt -oTARGET,SOURCE -rn /sysroot | grep -E "/dev/.*${part_to_grow}" -o | sed -E 's|(.*[a-z][0-9]*)(p?[0-9]+)$|\1 \2|')
+
+growpart ${root_part//p} 
+
+if [[ $? -eq 0 ]] 
+then  
+	mount -o remount,rw /sysroot		
+	/usr/lib/systemd/systemd-growfs /sysroot
+
+fi

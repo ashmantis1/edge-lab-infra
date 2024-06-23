@@ -1,0 +1,13 @@
+[Unit]
+Description=Grows Root FS for node image
+After=local-fs.target
+
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStart=/usr/libexec/growroot
+MountFlags=slave
+
+[Install]
+WantedBy=multi-user.target

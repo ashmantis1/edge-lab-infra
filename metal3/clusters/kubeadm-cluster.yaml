@@ -133,7 +133,7 @@ spec:
     rollingUpdate:
       maxSurge: 0
     type: RollingUpdate
-  version: v1.30.1
+  version: v1.30.2
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
 kind: Metal3MachineTemplate
@@ -154,7 +154,7 @@ spec:
         checksum: http://10.40.0.10:8080/SHA256SUM
         checksumType: sha256
         format: qcow2
-        url: http://10.40.0.10:8080/kube-node-image-v1.30.1.qcow2
+        url: http://10.40.0.10:8080/kube-node-image-v1.30.2.qcow2
 ---
 apiVersion: cluster.x-k8s.io/v1beta1
 kind: MachineDeployment
@@ -166,7 +166,7 @@ metadata:
   namespace: baremetal-operator-system
 spec:
   clusterName: kube-cluster
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       cluster.x-k8s.io/cluster-name: kube-cluster
@@ -192,7 +192,7 @@ spec:
         kind: Metal3MachineTemplate
         name: kube-cluster-workers
       nodeDrainTimeout: 0s
-      version: v1.30.1
+      version: v1.30.2
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
 kind: Metal3MachineTemplate
@@ -213,7 +213,7 @@ spec:
         checksum: http://10.40.0.10:8080/SHA256SUM
         checksumType: sha256
         format: qcow2
-        url: http://10.40.0.10:8080/kube-node-image-v1.30.1.qcow2
+        url: http://10.40.0.10:8080/kube-node-image-v1.30.2.qcow2
 ---
 apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
 kind: KubeadmConfigTemplate
