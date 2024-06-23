@@ -3,7 +3,6 @@ apiVersion: cluster.x-k8s.io/v1beta1
 kind: Cluster
 metadata:
   name: kube-cluster
-  namespace: baremetal-operator-system
 spec:
   clusterNetwork:
     pods:
@@ -16,9 +15,9 @@ spec:
     apiVersion: controlplane.cluster.x-k8s.io/v1beta1
     kind: KubeadmControlPlane
     name: kube-cluster
-    namespace: baremetal-operator-system
+    #namespace: baremetal-operator-system
   infrastructureRef:
     apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
     kind: Metal3Cluster
     name: kube-cluster
-    namespace: baremetal-operator-system
+    #    namespace: baremetal-operator-system

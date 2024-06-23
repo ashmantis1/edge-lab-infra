@@ -7,7 +7,6 @@ metadata:
     cluster.x-k8s.io/cluster-name: kube-cluster
     nodepool: nodepool-0
   name: kube-cluster
-  namespace: baremetal-operator-system
 spec:
   clusterName: kube-cluster
   replicas: 2
