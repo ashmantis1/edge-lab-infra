@@ -6,4 +6,4 @@ resources:
   - 3060-25.yaml
   - 3060-75.yaml
   - secret.yaml
-  - user-data.yaml
+  #  - user-data.yaml
