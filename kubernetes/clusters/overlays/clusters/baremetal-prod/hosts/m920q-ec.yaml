@@ -5,7 +5,7 @@ metadata:
   labels: 
     role: master
 spec:
-  online: false
+  online: true
   bootMACAddress: 98:fa:9b:fc:5e:ec
   bootMode: legacy
   bmc:

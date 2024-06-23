@@ -5,7 +5,7 @@ metadata:
   labels: 
     role: master
 spec:
-  online: false
+  online: true
   bootMACAddress: 98:fa:9b:1e:d6:de
   bootMode: legacy #UEFI  # use 'legacy' for Scenario 2
   bmc:
