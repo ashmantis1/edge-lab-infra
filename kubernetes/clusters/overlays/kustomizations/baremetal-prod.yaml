@@ -1,0 +1,14 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: baremetal-prod
+  namespace: flux-system
+spec:
+  interval: 1m0s
+  path: ./kubernetes/clusters/overlays/clusters/baremetal-prod
+
+  prune: false
+  sourceRef:
+    kind: "GitRepository"
+    name: "flux-system"
