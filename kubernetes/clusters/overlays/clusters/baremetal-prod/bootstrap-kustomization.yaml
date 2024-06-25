@@ -7,6 +7,10 @@ spec:
   interval: 1m0s
   path: ./kubernetes/clusters/overlays/clusters/baremetal-prod/bootstrap
 
+  postBuild:
+    substitute: 
+      cluster_name: ${cluster_name:=default-cluster}
+    
   dependsOn: 
     - name: ${cluster_name:=default-cluster}
       namespace: flux-system
