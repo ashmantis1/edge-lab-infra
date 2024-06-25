@@ -3,16 +3,12 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: baremetal-prod-bootstrap
-  namespace: flux-system
 spec:
   interval: 1m0s
   path: ./kubernetes/clusters/overlays/clusters/baremetal-prod/bootstrap
 
   dependsOn: 
     - name: ${cluster_name:=default-cluster}
-  kubeConfig: 
-    secretRef:
-      Name: ${cluster_name:=default-cluster}-kubeconfig
   prune: false
   sourceRef:
     kind: "GitRepository"

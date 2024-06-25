@@ -9,6 +9,7 @@ spec:
       name: ${cluster_name:=default-cluster}-kubeconfig
   targetNamespace: kube-system
   storageNamespace: kube-system
+  interval: 10m
   chart:
     spec:
       version: "1.15.6"

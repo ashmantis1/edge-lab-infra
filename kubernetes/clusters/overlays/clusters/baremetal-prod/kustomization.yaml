@@ -5,7 +5,7 @@ resources:
   - namespace.yaml
   - ../../../bases/kubeadm
   - ./hosts
-  - ./bootstrap
+  - bootstrap-kustomization.yaml
 
 patches: 
 - target: 
