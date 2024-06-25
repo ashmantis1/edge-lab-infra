@@ -13,9 +13,9 @@ spec:
     credentialsName: bml-01
   rootDeviceHints: 
     minSizeGigabytes: 10
-  userData: 
-    name: cloud-init-updates
-    namespace: baremetal-operator-system
+    #  userData: 
+    #    name: cloud-init-updates
+    #    namespace: baremetal-operator-system
     #image:
     #  checksumType: sha256
     #  checksum: "00262b5690e672f9196493580d4b4232fc477c5d50d3c674aef6346b09d3d818"

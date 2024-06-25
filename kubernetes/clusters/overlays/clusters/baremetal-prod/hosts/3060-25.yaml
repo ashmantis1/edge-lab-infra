@@ -16,9 +16,9 @@ spec:
   #model: "Micron 1100 SATA 256GB"
     model: "CT500MX500SSD1"
     minSizeGigabytes: 10
-  userData: 
-    name: cloud-init-updates
-    namespace: baremetal-operator-system
+    #  userData: 
+    #    name: cloud-init-updates
+    #    namespace: baremetal-operator-system
     #image:
     #  checksumType: sha256
     #  checksum: http://10.40.0.4/SHA256SUMS
