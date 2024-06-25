@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: cilium-$(cluster_name}
+  name: cilium-${cluster_name}
   namespace: ${cluster_name}
 spec:
   kubeConfig:
