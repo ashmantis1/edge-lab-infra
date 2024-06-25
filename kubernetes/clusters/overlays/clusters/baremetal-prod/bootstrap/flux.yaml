@@ -8,8 +8,8 @@ spec:
   kubeConfig:
     secretRef:
       name: ${cluster_name:=default-cluster}-kubeconfig
-      #targetNamespace: flux-system
-      #storageNamespace: kube-system
+  targetNamespace: flux-system
+  storageNamespace: kube-system
   interval: 10m
   chart:
     spec:
