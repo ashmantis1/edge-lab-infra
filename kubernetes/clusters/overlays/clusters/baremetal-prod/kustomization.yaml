@@ -5,6 +5,7 @@ resources:
   - namespace.yaml
   - ../../../bases/kubeadm
   - ./hosts
+  - ./bootstrap
 
 patches: 
 - target: 

@@ -1,0 +1,27 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: baremetal-prod
+  namespace: flux-system
+spec:
+  interval: 1m0s
+  path: ./kubernetes/clusters/overlays/clusters/baremetal-prod
+
+  healthChecks:
+    - apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+      kind: Metal3Cluster
+      namespace: baremetal-prod
+      name: baremetal-prod
+    - apiVersion: cluster.x-k8s.io/v1beta1 
+      kind: Cluster
+      namespace: baremetal-prod
+      name: baremetal-prod
+  postBuild:
+    substitute:
+      cluster_name: baremetal-prod
+      k8s_version: 1.30.2
+  prune: false
+  sourceRef:
+    kind: "GitRepository"
+    name: "flux-system"

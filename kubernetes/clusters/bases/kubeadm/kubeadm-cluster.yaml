@@ -1,7 +1,7 @@
 apiVersion: cluster.x-k8s.io/v1beta1
 kind: Cluster
 metadata:
-  name: kube-cluster
+  name: ${cluster_name:=default-cluster}
 spec:
   clusterNetwork:
     pods:
@@ -13,19 +13,19 @@ spec:
   controlPlaneRef:
     apiVersion: controlplane.cluster.x-k8s.io/v1beta1
     kind: KubeadmControlPlane
-    name: kube-cluster
-    
+    name: ${cluster_name:=default-cluster}
+    namespace: replaceme 
   infrastructureRef:
     apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
     kind: Metal3Cluster
-    name: kube-cluster
+    name: ${cluster_name:=default-cluster}
+    namespace: replaceme
     
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
 kind: Metal3Cluster
 metadata:
-  name: kube-cluster
-  
+  name: ${cluster_name:=default-cluster}
 spec:
   controlPlaneEndpoint:
     host: 10.40.2.100
@@ -35,8 +35,7 @@ spec:
 apiVersion: controlplane.cluster.x-k8s.io/v1beta1
 kind: KubeadmControlPlane
 metadata:
-  name: kube-cluster
-  
+  name: ${cluster_name:=default-cluster}
 spec:
   kubeadmConfigSpec:
     initConfiguration:
@@ -124,7 +123,7 @@ spec:
     infrastructureRef:
       apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
       kind: Metal3MachineTemplate
-      name: kube-cluster-controlplane
+      name: ${cluster_name:=default-cluster}-controlplane
       
     nodeDrainTimeout: 0s
   replicas: 3
@@ -132,13 +131,12 @@ spec:
     rollingUpdate:
       maxSurge: 0
     type: RollingUpdate
-  version: v1.30.2
+  version: v${k8s_version:=1.30.1}
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
 kind: Metal3MachineTemplate
 metadata:
-  name: kube-cluster-controlplane
-  
+  name: ${cluster_name:=default-cluster}-controlplane
 spec:
   nodeReuse: true
   template:
@@ -148,27 +146,27 @@ spec:
         matchLabels: 
           role: master
       dataTemplate:
-        name: kube-cluster-controlplane-template
+        name: ${cluster_name:=default-cluster}-controlplane-template
       image:
         checksum: http://10.40.0.10:8080/SHA256SUM
         checksumType: sha256
         format: qcow2
-        url: http://10.40.0.10:8080/kube-node-image-v1.30.2.qcow2
+        url: http://10.40.0.10:8080/kube-node-image-v${k8s_version:=1.30.1}.qcow2
 ---
 apiVersion: cluster.x-k8s.io/v1beta1
 kind: MachineDeployment
 metadata:
   labels:
-    cluster.x-k8s.io/cluster-name: kube-cluster
+    cluster.x-k8s.io/cluster-name: ${cluster_name:=default-cluster}
     nodepool: nodepool-0
-  name: kube-cluster
+  name: ${cluster_name:=default-cluster}
   
 spec:
-  clusterName: kube-cluster
+  clusterName: ${cluster_name:=default-cluster}
   replicas: 3
   selector:
     matchLabels:
-      cluster.x-k8s.io/cluster-name: kube-cluster
+      cluster.x-k8s.io/cluster-name: ${cluster_name:=default-cluster}
       nodepool: nodepool-0
   strategy: 
     rollingUpdate: 
@@ -177,27 +175,26 @@ spec:
   template:
     metadata:
       labels:
-        cluster.x-k8s.io/cluster-name: kube-cluster
+        cluster.x-k8s.io/cluster-name: ${cluster_name:=default-cluster}
         nodepool: nodepool-0
     spec:
       bootstrap:
         configRef:
           apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
           kind: KubeadmConfigTemplate
-          name: kube-cluster-workers
-      clusterName: kube-cluster
+          name: ${cluster_name:=default-cluster}-workers
+      clusterName: ${cluster_name:=default-cluster}
       infrastructureRef:
         apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
         kind: Metal3MachineTemplate
-        name: kube-cluster-workers
+        name: ${cluster_name:=default-cluster}-workers
       nodeDrainTimeout: 0s
-      version: v1.30.2
+      version: v${k8s_version:=1.30.1}
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
 kind: Metal3MachineTemplate
 metadata:
-  name: kube-cluster-workers
-  
+  name: ${cluster_name:=default-cluster}-workers
 spec:
   nodeReuse: true
   template:
@@ -207,18 +204,17 @@ spec:
         matchLabels: 
           role: worker
       dataTemplate:
-        name: kube-cluster-workers-template
+        name: ${cluster_name:=default-cluster}-workers-template
       image:
         checksum: http://10.40.0.10:8080/SHA256SUM
         checksumType: sha256
         format: qcow2
-        url: http://10.40.0.10:8080/kube-node-image-v1.30.2.qcow2
+        url: http://10.40.0.10:8080/kube-node-image-v${k8s_version:=1.30.1}.qcow2
 ---
 apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
 kind: KubeadmConfigTemplate
 metadata:
-  name: kube-cluster-workers
-  
+  name: ${cluster_name:=default-cluster}-workers
 spec:
   template:
     spec:
@@ -237,14 +233,13 @@ spec:
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
 kind: Metal3DataTemplate
 metadata:
-  name: kube-cluster-controlplane-template
-  
+  name: ${cluster_name:=default-cluster}-controlplane-template
 spec:
-  clusterName: kube-cluster
+  clusterName: ${cluster_name:=default-cluster}
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
 kind: Metal3DataTemplate
 metadata:
-  name: kube-cluster-workers-template
+  name: ${cluster_name:=default-cluster}-workers-template
 spec:
-  clusterName: kube-cluster
+  clusterName: ${cluster_name:=default-cluster}
