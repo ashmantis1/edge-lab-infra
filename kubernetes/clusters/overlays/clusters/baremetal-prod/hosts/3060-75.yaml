@@ -13,6 +13,7 @@ spec:
     credentialsName: bml-02
   rootDeviceHints: 
     minSizeGigabytes: 10
+    model: "CT500MX500SSD1"
   #    deviceName: /dev/sda
   #  model: "Micron 1100 SATA 256GB"
   #    model: "CT500MX500SSD1"
