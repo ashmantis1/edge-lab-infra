@@ -11,6 +11,8 @@ spec:
   targetNamespace: flux-system
   storageNamespace: kube-system
   interval: 10m
+  install:
+    createNamespace: true
   chart:
     spec:
       version: "*"
