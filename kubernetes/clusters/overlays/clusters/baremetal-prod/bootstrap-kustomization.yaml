@@ -9,6 +9,7 @@ spec:
 
   dependsOn: 
     - name: ${cluster_name:=default-cluster}
+      namespace: flux-system
   prune: false
   sourceRef:
     kind: "GitRepository"
