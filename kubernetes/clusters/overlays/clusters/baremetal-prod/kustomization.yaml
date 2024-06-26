@@ -1,10 +1,10 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: baremetal
+namespace: baremetal-prod
 resources: 
   - namespace.yaml
   - ../../../bases/kubeadm
-  - ./hosts
+  #  - ./hosts
   - bootstrap-kustomization.yaml
 
 patches: 
@@ -13,10 +13,10 @@ patches:
   patch: | 
     - op: replace
       path: /spec/controlPlaneRef/namespace
-      value: baremetal
+      value: baremetal-prod
 - target: 
     kind: Cluster
   patch: | 
     - op: replace
       path: /spec/infrastructureRef/namespace
-      value: baremetal
+      value: baremetal-prod
