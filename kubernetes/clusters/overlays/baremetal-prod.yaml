@@ -21,6 +21,7 @@ spec:
     substitute:
       cluster_name: baremetal-prod # Should match kustomization name
       k8s_version: 1.30.1
+      k8s_endpoint: 10.40.2.200
   prune: true
   sourceRef:
     kind: "GitRepository"

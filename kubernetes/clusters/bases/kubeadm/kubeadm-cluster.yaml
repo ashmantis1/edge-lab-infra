@@ -28,7 +28,7 @@ metadata:
   name: ${cluster_name:=default-cluster}
 spec:
   controlPlaneEndpoint:
-    host: 10.40.2.100
+    host: ${k8s_endpoint}
     port: 6443
   noCloudProvider: true
 ---
@@ -96,7 +96,7 @@ spec:
                 - name: vip_retryperiod
                   value: "1"
                 - name: address
-                  value: 10.40.2.100
+                  value: ${k8s_endpoint}
                 image: ghcr.io/kube-vip/kube-vip:v0.4.0
                 imagePullPolicy: Always
                 name: kube-vip
@@ -123,7 +123,7 @@ spec:
     infrastructureRef:
       apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
       kind: Metal3MachineTemplate
-      name: ${cluster_name:=default-cluster}-controlplane
+      name: ${cluster_name:=default-cluster}-${k8s_version}-controlplane
       
     nodeDrainTimeout: 0s
   replicas: 3
@@ -136,7 +136,7 @@ spec:
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
 kind: Metal3MachineTemplate
 metadata:
-  name: ${cluster_name:=default-cluster}-controlplane
+  name: ${cluster_name:=default-cluster}-${k8s_version}-controlplane
 spec:
   nodeReuse: true
   template:
@@ -187,14 +187,14 @@ spec:
       infrastructureRef:
         apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
         kind: Metal3MachineTemplate
-        name: ${cluster_name:=default-cluster}-workers
+        name: ${cluster_name:=default-cluster}-${k8s_version}-workers
       nodeDrainTimeout: 0s
       version: v${k8s_version:=1.30.1}
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
 kind: Metal3MachineTemplate
 metadata:
-  name: ${cluster_name:=default-cluster}-workers
+  name: ${cluster_name:=default-cluster}-${k8s_version}-workers
 spec:
   nodeReuse: true
   template:
