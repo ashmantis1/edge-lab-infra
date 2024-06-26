@@ -10,6 +10,7 @@ spec:
   postBuild:
     substitute: 
       cluster_name: ${cluster_name:=default-cluster}
+      k8s_endpoint: ${k8s_endpoint}
     
   dependsOn: 
     - name: ${cluster_name:=default-cluster}
