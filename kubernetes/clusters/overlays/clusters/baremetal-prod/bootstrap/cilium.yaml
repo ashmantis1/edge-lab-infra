@@ -11,6 +11,12 @@ spec:
   targetNamespace: kube-system
   storageNamespace: kube-system
   interval: 10m
+  install:
+    remediation:
+      retries: -1
+  upgrade: 
+    remediation:
+      retries: -1
   chart:
     spec:
       version: "1.15.6"

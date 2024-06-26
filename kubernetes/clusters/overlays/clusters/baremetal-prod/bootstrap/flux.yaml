@@ -13,6 +13,11 @@ spec:
   interval: 10m
   install:
     createNamespace: true
+    remediation:
+      retries: -1
+  upgrade: 
+    remediation:
+      retries: -1
   chart:
     spec:
       version: "*"
