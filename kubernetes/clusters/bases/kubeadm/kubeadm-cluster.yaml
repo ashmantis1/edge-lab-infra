@@ -13,12 +13,12 @@ spec:
   controlPlaneRef:
     apiVersion: controlplane.cluster.x-k8s.io/v1beta1
     kind: KubeadmControlPlane
-    name: ${cluster_name:=default-cluster}
+    name: ${cluster_name:=default-cluster}-controlplane
     namespace: replaceme 
   infrastructureRef:
     apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
     kind: Metal3Cluster
-    name: ${cluster_name:=default-cluster}
+    name: ${cluster_name:=default-cluster}-workers
     namespace: replaceme
     
 ---
@@ -123,8 +123,7 @@ spec:
     infrastructureRef:
       apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
       kind: Metal3MachineTemplate
-      name: controlplane
-      
+      name: ${cluster_name:=default-cluster}-controlplane
     nodeDrainTimeout: 0s
   replicas: 3
   rolloutStrategy:
