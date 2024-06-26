@@ -2,7 +2,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: baremetal-prod
+  name: baremetal-prod 
   namespace: flux-system
 spec:
   interval: 1m0s
@@ -19,9 +19,9 @@ spec:
       name: baremetal-prod
   postBuild:
     substitute:
-      cluster_name: baremetal-prod
+      cluster_name: baremetal-prod # Should match kustomization name
       k8s_version: 1.30.2
-  prune: false
+  prune: true
   sourceRef:
     kind: "GitRepository"
     name: "flux-system"
