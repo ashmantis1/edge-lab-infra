@@ -1,5 +1,7 @@
 layout: page
+
 title: "Baremetal Kubernetes" 
+
 permalink: /edge-lab-infra/how-and-why
 
 # Baremetal Kubernetes with a twist
