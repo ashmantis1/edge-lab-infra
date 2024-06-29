@@ -1,5 +1,3 @@
-# Baremetal Kubernetes with a twist
-
 If you want to get started head to the [edge-lab-infra](https://github.com/ashmantis1/edge-lab-infra) repository.
 
 ## How it all Works
