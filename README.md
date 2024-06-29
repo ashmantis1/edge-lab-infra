@@ -1,4 +1,4 @@
-# Edge Lab Kubernetes Setup
+# [Edge Lab Infrastructure](https://github.com/ashmantis1/edge-lab-infra)
 
 This is a baremetal kubernetes setup, using Cluster API and the Metal3.
 
