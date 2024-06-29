@@ -1,4 +1,4 @@
-If you want to get started head to the [edge-lab-infra](https://github.com/ashmantis1/edge-lab-infra) repository.
+If you want to get started head to the [edge-lab-infra](https://github.com/ashmantis1/edge-lab-infra) repository. The README will outline most of the important steps to actually get started.
 
 ## How it all Works
 
@@ -24,7 +24,10 @@ With all the important endpoints implemented (all very similar for AMT but a lit
 
 To fix this issue, I used the SQLite database already provided in the Fake Driver to cache the current power state of a node. This means that when a request to get the current power state is made, the driver will respond with the same power state for about 30 seconds after the last state was pulled from the plugs. After that period elapses, any future request will  call the plugs API directly, and start the countdown again. After this fix was implemented, the node was now (relatively) consistently turning on and off as Ironic requested. 
 
+* Ironic probably cares a bit about other things, but I don't
+
 With BMC out of the way, now came deploying the cluster...
+
 
 ### Metal3 and Cluster API 
 
