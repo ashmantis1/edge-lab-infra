@@ -1,0 +1,8 @@
+k8s_version: 1.30.2
+image_name: kube-node-image
+image_repository: localhost
+image_path: "./images"
+image_type: qcow2
+rootfs_size: 100
+qcow2_rootfs: xfs
+webserver_port: 8080

@@ -1,15 +1,17 @@
 - hosts: localhost 
   name: Build and deploy docker image 
   become: yes
-  vars: 
-    k8s_version: 1.30.2
-    image_name: kube-node-image
-    image_repository: localhost
-    image_path: "./images"
-    image_type: qcow2
-    rootfs_size: 100
-    qcow2_rootfs: xfs
-    webserver_port: 8080
+  vars_files: 
+    - vars.yaml
+  # vars: 
+  #    k8s_version: 1.30.2
+  #    image_name: kube-node-image
+  #    image_repository: localhost
+  #    image_path: "./images"
+  #    image_type: qcow2
+  #    rootfs_size: 100
+  #    qcow2_rootfs: xfs
+  #    webserver_port: 8080
   tasks: 
       
     - name: Template all configuration
