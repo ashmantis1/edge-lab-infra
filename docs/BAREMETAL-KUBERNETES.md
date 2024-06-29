@@ -1,9 +1,3 @@
-layout: page
-
-title: "Baremetal Kubernetes" 
-
-permalink: /edge-lab-infra/how-and-why
-
 # Baremetal Kubernetes with a twist
 
 If you want to get started head to the [edge-lab-infra](https://github.com/ashmantis1/edge-lab-infra) repository.
