@@ -1,7 +1,8 @@
 # Edge Lab Infrastructure
 
 This is a baremetal kubernetes setup, using Cluster API and the Metal3.
-For more information about the project see: docs.ashmantis.com/edge-lab-infra/how-and-why
+
+For more information about the project see: https://docs.ashmantis.com/edge-lab-infra/how-and-why
 
 ## Getting started 
 
