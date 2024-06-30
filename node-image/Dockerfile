@@ -2,11 +2,14 @@ FROM quay.io/fedora/fedora-bootc:40
 
 ARG K8S_VERSION=1.30.2
 ENV K8S_VERSION=$K8S_VERSION
-COPY ./files/kubernetes.repo /etc/yum.repos.d/kubernetes.repo
-COPY ./files/cri-o.repo /etc/yum.repos.d/cri-o.repo
-COPY ./files/kubernetes.conf /etc/sysctl.d/kubernetes.conf
-COPY ./files/growroot /usr/libexec/growroot
-COPY ./files/growroot.service /etc/systemd/system/growroot.service
+#COPY ./files/kubernetes.repo /etc/yum.repos.d/kubernetes.repo
+#COPY ./files/cri-o.repo /etc/yum.repos.d/cri-o.repo
+#COPY ./files/kubernetes.conf /etc/sysctl.d/kubernetes.conf
+#COPY ./files/growroot /usr/libexec/growroot
+#COPY ./files/growroot.service /etc/systemd/system/growroot.service
+
+COPY ./files/etc /etc
+COPY ./files/usr /usr
 
 VOLUME /var/lib/containers
 RUN dnf install -y conntrack container-selinux ebtables ethtool iptables socat && \ 

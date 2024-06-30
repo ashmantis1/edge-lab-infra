@@ -1,5 +1,6 @@
 - hosts: localhost 
   name: Build and deploy docker image 
+  gather_facts: no
   become: yes
   vars_files: 
     - vars.yaml
@@ -14,12 +15,15 @@
   #    webserver_port: 8080
   tasks: 
       
-    - name: Template all configuration
-      ansible.builtin.template: 
-        src: "{{ item }}" 
-        dest: "./files/{{ item | basename | regex_replace('\\.j2$', '') }}"
-      with_fileglob: 
-        - ./templates/*.j2
+    - name: Template files (explicitly skip directories in order to use the 'src' attribute)
+      ansible.builtin.template:
+        src: '{{ item.src }}'
+        # Your template files should be stored with a .j2 file extension,
+        # but should not be deployed with it. splitext|first removes it.
+        dest: ./files/{{ item.path | splitext | first }}
+        mode: '{{ item.mode }}'
+      with_community.general.filetree: templates/
+      when: item.state == 'file'
 
     - name: Build and tag image
       containers.podman.podman_image: 
