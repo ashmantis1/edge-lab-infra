@@ -3,4 +3,5 @@ kind: Kustomization
 resources:
 - metal3.yaml
 - vault.yaml
+- cert-manager.yaml
 - repositories.yaml
