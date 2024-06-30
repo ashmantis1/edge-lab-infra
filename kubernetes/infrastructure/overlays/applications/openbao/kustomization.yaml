@@ -4,3 +4,8 @@ namespace: openbao
 resources:
   - ../../../bases/openbao
   - namespace.yaml
+
+patches:
+  - target:
+      kind: HelmRelease
+    path: ./openbao-patch.yaml
