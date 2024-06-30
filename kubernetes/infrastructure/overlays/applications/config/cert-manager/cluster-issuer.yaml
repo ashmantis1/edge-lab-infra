@@ -18,5 +18,4 @@ spec:
         cloudflare:
           apiTokenSecretRef:
             name: cloudflare-api-token
-            namespace: cert-manager
             key: api-key
