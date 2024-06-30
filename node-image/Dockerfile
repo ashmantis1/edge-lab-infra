@@ -20,9 +20,11 @@ RUN dnf install -y conntrack container-selinux ebtables ethtool iptables socat &
 		echo "InitiatorName=$(/sbin/iscsi-iname)" > /etc/iscsi/initiatorname.iscsi && \
 		# Systemd Units
 		systemctl enable iscsid && \
-		systemctl enable growroot.service && \
+		systemctl enable bootc-generic-growpart.service && \
+		# systemctl enable growroot.service && \
 		systemctl enable crio.service && \
 		systemctl enable kubelet.service && \
+		systemctl mask bootc-fetch-apply-updates.timer && \
 		# Persistence
 		mkdir -p /var/libexec/kubernetes && \ 
 		ln -rs /var/libexec/kubernetes /usr/libexec/kubernetes && \

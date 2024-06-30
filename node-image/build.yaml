@@ -31,6 +31,9 @@
         tag: "{{ k8s_version }}"
         path: ./
         force: true
+        push: true
+        password: "{{ registry_password }}"
+        username: "{{ registry_username }}"
         build: 
           extra_args: "--build-arg K8S_VERSION={{ k8s_version }}"
 
