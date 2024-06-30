@@ -6,7 +6,8 @@ metadata:
   namespace: openbao
 spec:
   values: 
-  global:
+    ui:
+      enabled: true
     server:
       ingress:
         enabled: true
