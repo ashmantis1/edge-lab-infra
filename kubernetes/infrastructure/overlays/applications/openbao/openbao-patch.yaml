@@ -6,8 +6,10 @@ metadata:
   namespace: openbao
 spec:
   values: 
-    ingress:
-      enabled: true
-      hosts:
-        - host: vault.infra.edge.ashman.world
+  global:
+    server:
+      ingress:
+        enabled: true
+        hosts:
+          - host: vault.infra.edge.ashman.world
 
