@@ -58,10 +58,10 @@ Once the cluster has been deployed, you can get the kubeconfig by running:
 
 Now all kubectl commands will be run against the cluster you deployed.
 
-### Upgrading the cluster 
-To update the OS system packages, the node image container can be rebuilt and pushed to the container repository. Each node will then perform an in place update after a period of time. However this method is not ideal for updating the kubernetes version, as ClusterAPI is not aware of the system package updates.
+### Updating and Upgrading the cluster 
+To update the OS system packages, the node image container can be rebuilt and pushed to the container repository. You can then run `bootc update --apply --quiet` on each node. This will reboot the node, and deploy the updated image without overwriting other files. I have disabled the automatic bootc updates, as it brings nodes down without marking them unschedulable which could be problematic when the cluster is in use. This method is not ideal for updating the kubernetes version, as ClusterAPI is not aware of the system package updates.
 
-Currently to update the Kubernetes version of the cluster, a new node image must be built with the required version and made available over HTTP (see building the node image above). Then, new Metal3MachineTemplates need to be created for both the workers and masters, and the KubeadmControlPlane and MachineDeployments must be updated to refer to the new templates. Both those resources' kubernetes versions must also be made to match the desired version. This will schedule an in-place rollout where nodes will be deleted and re-provisioned one by one, until the cluster is updated. This should not cause down time, as pods will reschedule as the nodes are reprovisioned.
+To update the Kubernetes version of the cluster, a new node image must be built with the required version and made available over HTTP (see building the node image above). Then, new Metal3MachineTemplates need to be created for both the workers and masters, and the KubeadmControlPlane and MachineDeployments must be updated to refer to the new templates. Both those resources' kubernetes versions must also be made to match the desired version. This will schedule an in-place rollout where nodes will be deleted and re-provisioned one by one, until the cluster is updated. This should not cause down time, as pods will reschedule as the nodes are reprovisioned.
 
 More information can be found at these sites:
 - https://cluster-api.sigs.k8s.io/tasks/upgrading-clusters
