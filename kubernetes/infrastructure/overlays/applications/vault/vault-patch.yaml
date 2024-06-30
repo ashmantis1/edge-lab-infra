@@ -13,4 +13,10 @@ spec:
         enabled: true
         hosts:
           - host: vault.infra.edge.ashman.world
+        annotations:
+          cert-manager.io/cluster-issuer: letsencrypt-prod
+        tls:
+          - secretName: vault-tls
+            hosts: 
+              - vault.infra.edge.ashman.world
 
