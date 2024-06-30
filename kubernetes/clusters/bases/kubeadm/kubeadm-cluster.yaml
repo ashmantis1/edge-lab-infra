@@ -221,7 +221,7 @@ spec:
       joinConfiguration:
         nodeRegistration:
           kubeletExtraArgs:
-            node-labels: metal3.io/uuid={{ ds.meta_data.uuid }},node-role.kubernetes.io/worker=worker
+            node-labels: metal3.io/uuid={{ ds.meta_data.uuid }}
           name: '{{ ds.meta_data.name }}'
       users:
       - name: user
