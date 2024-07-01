@@ -36,6 +36,9 @@
     content: |
         #!/bin/bash
         export KUBECONFIG=/etc/kubernetes/admin.conf
+        export HELM_CONFIG_HOME=/tmp
+        export HELM_DATA_HOME=/tmp
+        export HELM_CACHE_HOME=/tmp
         kubectl -n kube-system delete ds kube-proxy
         kubectl -n kube-system delete cm kube-proxy
         iptables-save | grep -v KUBE | iptables-restore
