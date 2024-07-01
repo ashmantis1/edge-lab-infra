@@ -10,11 +10,12 @@ resources:
 patches: 
 - target: 
     kind: KubeadmControlPlane
-  patch: | 
-    - op: add 
-      path: /metadata/annotations
-      value: 
-        controlplane.cluster.x-k8s.io/skip-kube-proxy: true
+  path: ./patches/kubeadmcontrolplane-patch.yaml
+    #  patch: | 
+    #    - op: add 
+    #      path: /metadata/annotations
+    #      value: 
+    #        controlplane.cluster.x-k8s.io/skip-kube-proxy: true
   
 - target: 
     kind: Cluster

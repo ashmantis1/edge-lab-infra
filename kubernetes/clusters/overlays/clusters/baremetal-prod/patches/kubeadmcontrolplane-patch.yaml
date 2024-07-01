@@ -1,0 +1,50 @@
+#
+#apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+#kind: KubeadmControlPlane
+#metadata:
+#  name: baremetal-prod
+#spec:
+#  kubeadmConfigSpec: 
+#    postKubeadmCommands:
+#    - "/tmp/installCilium.sh"
+#    files: 
+#      - path: /tmp/installCilium.sh
+#        permissions: 0755
+#        content: |
+#            #!/bin/bash
+#            export KUBECONFIG=/etc/kubernetes/admin.conf
+#            kubectl -n kube-system delete ds kube-proxy
+#            kubectl -n kube-system delete cm kube-proxy
+#            iptables-save | grep -v KUBE | iptables-restore
+#        
+#            curl -o /tmp/helm.tar.gz "https://get.helm.sh/helm-v3.15.2-linux-amd64.tar.gz"
+#            tar xvf /tmp/helm.tar.gz -C /tmp
+#            chmod a+x /tmp/linux-amd64/helm
+#        
+#            /tmp/linux-amd64/helm repo add cilium https://helm.cilium.io/
+#            /tmp/linux-amd64/helm install cilium cilium/cilium --version 1.15.6 --set kubeProxyReplacement=true --set k8sServiceHost=10.40.2.200 --set k8sServicePort=6443 --namespace kube-system
+#
+- op: add
+  path: /spec/kubeadmConfigSpec/postKubeadmCommands/-
+  value: "/tmp/installCilium.sh" 
+
+- op: add
+  path: /spec/kubeadmConfigSpec/files/- 
+  value:
+    path: /tmp/installCilium.sh
+    permissions: "0755"
+    content: |
+        #!/bin/bash
+        export KUBECONFIG=/etc/kubernetes/admin.conf
+        kubectl -n kube-system delete ds kube-proxy
+        kubectl -n kube-system delete cm kube-proxy
+        iptables-save | grep -v KUBE | iptables-restore
+    
+        curl -o /tmp/helm.tar.gz "https://get.helm.sh/helm-v3.15.2-linux-amd64.tar.gz"
+        tar xvf /tmp/helm.tar.gz -C /tmp
+        chmod a+x /tmp/linux-amd64/helm
+    
+        /tmp/linux-amd64/helm repo add cilium https://helm.cilium.io/
+        /tmp/linux-amd64/helm install cilium cilium/cilium --version 1.15.6 --set kubeProxyReplacement=true --set k8sServiceHost=10.40.2.200 --set k8sServicePort=6443 --namespace kube-system
+        rm -rf /tmp/linux-amd64 && rm /tmp/helm.tar.gz
+
