@@ -9,6 +9,14 @@ resources:
 
 patches: 
 - target: 
+    kind: KubeadmControlPlane
+  patch: | 
+    - op: add 
+      path: /metadata/annotations
+      value: 
+        controlplane.cluster.x-k8s.io/skip-kube-proxy: true
+  
+- target: 
     kind: Cluster
   patch: | 
     - op: replace
