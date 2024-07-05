@@ -8,9 +8,9 @@ resources:
   #  - bootstrap-kustomization.yaml
 
 patches: 
-- target: 
-    kind: KubeadmControlPlane
-  path: ./patches/kubeadmcontrolplane-patch.yaml
+#- target: 
+#    kind: KubeadmControlPlane
+#  path: ./patches/kubeadmcontrolplane-patch.yaml
     #  patch: | 
     #    - op: add 
     #      path: /metadata/annotations

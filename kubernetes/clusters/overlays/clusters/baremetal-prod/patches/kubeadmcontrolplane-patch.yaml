@@ -29,12 +29,7 @@
 #  value: "/tmp/installCilium.sh" 
 - op: add
   path: /spec/kubeadmConfigSpec/postKubeadmCommands/-
-  value: |
-    export VERSION=v4.44.2 && \
-    BINARY=yq_linux_amd64 && \
-    wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY}.tar.gz -O - |\
-    tar xz && mv ${BINARY} /usr/bin/yq && \
-    yq -i '.spec.containers[0].command[2] += "--oidc-client-id=kubelogin --oidc-groups-claim=groups --oidc-issuer-url=https://dex.k8s.edge.ashman.world --oidc-username-claim=email "' /etc/kubernetes/manifests/kube-apiserver.yaml
+  value: export VERSION=v4.44.2 && export BINARY=yq_linux_amd64 && wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY}.tar.gz -O - | tar xz && mv ${BINARY} /usr/bin/yq && yq -i '.spec.containers[0].command[2] += "--oidc-client-id=kubelogin --oidc-groups-claim=groups --oidc-issuer-url=https://dex.k8s.edge.ashman.world --oidc-username-claim=email "' /etc/kubernetes/manifests/kube-apiserver.yaml
     
 
 - op: add
