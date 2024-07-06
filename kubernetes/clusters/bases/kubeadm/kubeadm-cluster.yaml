@@ -218,6 +218,10 @@ metadata:
 spec:
   template:
     spec:
+      mounts: []
+      diskSetup:
+        filesystems: []
+        partitions: []
       joinConfiguration:
         nodeRegistration:
           kubeletExtraArgs:
