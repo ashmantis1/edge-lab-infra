@@ -12,8 +12,8 @@
         #!/bin/bash
         export VERSION=v4.44.2
         export BINARY=yq_linux_amd64
-        wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY}.tar.gz -O - | tar xz
-        mv ${BINARY} /tmp/yq
+        wget https://github.com/mikefarah/yq/releases/download/$VERSION/$BINARY.tar.gz -O - | tar xz
+        mv $BINARY /tmp/yq
         /tmp/yq -i '.spec.containers[0].command += "--oidc-client-id=kubelogin"' /etc/kubernetes/manifests/kube-apiserver.yaml
         /tmp/yq -i '.spec.containers[0].command += "--oidc-groups-claim=groups"' /etc/kubernetes/manifests/kube-apiserver.yaml
         /tmp/yq -i '.spec.containers[0].command += "--oidc-issuer-url=https://dex.k8s.edge.ashman.world"' /etc/kubernetes/manifests/kube-apiserver.yaml
