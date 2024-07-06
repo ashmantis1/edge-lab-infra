@@ -1,0 +1,22 @@
+- op: add
+  path: /spec/template/spec/diskSetup/filesystems/-
+  value:
+    device: /dev/sdb
+    filesystem: ext4
+    label: longhorn
+
+- op: add
+  path: /spec/template/spec/diskSetup/partitions/-
+  value:
+    device: /dev/sdb
+    layout: true
+    overwrite: false
+    tableType: gpt
+
+- op: add 
+  path: /spec/template/spec/mounts/-
+  value: 
+    - LABEL=longhorn
+    - /var/lib/longhorn
+    
+    
