@@ -5,3 +5,4 @@ resources:
 - jetstack.yaml
 - minio.yaml
 - csi-driver-nfs.yaml
+- projectsveltos.yaml

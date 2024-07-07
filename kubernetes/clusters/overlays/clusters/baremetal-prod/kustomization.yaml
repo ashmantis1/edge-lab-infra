@@ -9,6 +9,9 @@ resources:
 
 patches: 
 - target:
+    kind: Cluster
+  path: patches/cluster.yaml
+- target:
     kind: KubeadmConfigTemplate
   path: ./patches/kubeadmconfig-patch.yaml
 - target: 

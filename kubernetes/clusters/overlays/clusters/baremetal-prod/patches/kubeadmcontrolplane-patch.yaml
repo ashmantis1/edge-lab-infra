@@ -1,3 +1,6 @@
+#- op: add
+#  path: /spec/kubeadmConfigSpec/postKubeadmCommands/-
+#  value: "/tmp/installCNI.sh"
 - op: add
   path: /spec/kubeadmConfigSpec/postKubeadmCommands/-
   value: "/tmp/updateKubeapi.sh"
@@ -20,6 +23,29 @@
         /tmp/yq -i '.spec.containers[0].command += "--oidc-issuer-url=https://dex.k8s.edge.ashman.world"' /etc/kubernetes/manifests/kube-apiserver.yaml
         /tmp/yq -i '.spec.containers[0].command += "--oidc-username-claim=email"' /etc/kubernetes/manifests/kube-apiserver.yaml
 
+
+- op: add
+  path: /spec/kubeadmConfigSpec/files/- 
+  value:
+    path: /tmp/installCNI.sh
+    permissions: "0755"
+    content: |
+        #!/bin/bash
+        if [ -f /etc/kubernetes/super-admin.conf ]; then
+          export KUBECONFIG=/etc/kubernetes/admin.conf
+          export HELM_CONFIG_HOME=/tmp
+          export HELM_DATA_HOME=/tmp
+          export HELM_CACHE_HOME=/tmp
+      
+          curl -o /tmp/helm.tar.gz "https://get.helm.sh/helm-v3.15.2-linux-amd64.tar.gz"
+          tar xvf /tmp/helm.tar.gz -C /tmp
+          chmod a+x /tmp/linux-amd64/helm
+      
+          kubectl create ns tigera-operator
+          /tmp/linux-amd64/helm repo add calico https://docs.tigera.io/calico/charts
+          /tmp/linux-amd64/helm install calico calico/tigera-operator --version v3.28.0 --namespace tigera-operator --set installation.cni.type=Calico --set installation.ipPools[0].cidr="192.168.0.0/18" --set installation.ipPools[0].encapsulation=VXLAN
+          rm -rf /tmp/linux-amd64 && rm /tmp/helm.tar.gz
+        fi
 
 #- op: add
 #  path: /spec/kubeadmConfigSpec/files/- 

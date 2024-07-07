@@ -2,15 +2,10 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: flux-${cluster_name}
-  namespace: ${cluster_name}
+  name: projectsveltos
+  namespace: projectsveltos
 spec:
-  kubeConfig:
-    secretRef:
-      name: ${cluster_name:=default-cluster}-kubeconfig
-  targetNamespace: flux-system
-  storageNamespace: kube-system
-  interval: 10m
+  dependsOn: []
   install:
     createNamespace: true
     remediation:
@@ -18,13 +13,14 @@ spec:
   upgrade: 
     remediation:
       retries: -1
+  interval: 30m
   chart:
     spec:
+      chart: projectsveltos
       version: "*"
-      chart: flux2
       sourceRef:
         kind: HelmRepository
-        name: flux
-        namespace: ${cluster_name:=default-cluster}
+        name: projectsveltos
+        namespace: flux-system
       interval: 12h
-  values: 
+  values:
