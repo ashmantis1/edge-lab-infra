@@ -7,3 +7,4 @@ resources:
 - cert-manager.yaml
 - repositories.yaml
 - minio.yaml
+- csi-driver-nfs.yaml

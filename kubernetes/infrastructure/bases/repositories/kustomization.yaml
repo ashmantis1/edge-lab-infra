@@ -4,3 +4,4 @@ resources:
 - vault.yaml
 - jetstack.yaml
 - minio.yaml
+- csi-driver-nfs.yaml
