@@ -8,7 +8,14 @@ spec:
   values:
     ingress:
       enabled: true
+      hostname: minio.infra.edge.ashman.world
+      tls: true
+      annotations:
+        cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    apiIngress:
+      enabled: true
       hostname: s3.infra.edge.ashman.world
       tls: true
       annotations:
         cert-manager.io/cluster-issuer: "letsencrypt-prod"
+
