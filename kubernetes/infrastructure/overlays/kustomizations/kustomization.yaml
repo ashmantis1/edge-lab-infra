@@ -6,3 +6,4 @@ resources:
 - config.yaml
 - cert-manager.yaml
 - repositories.yaml
+- minio.yaml
