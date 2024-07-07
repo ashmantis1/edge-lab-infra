@@ -7,3 +7,5 @@ metadata:
 spec:
   interval: 24h
   url: oci://registry-1.docker.io/bitnamicharts/minio
+  ref: 
+    semver: ">= 14.6.19"
