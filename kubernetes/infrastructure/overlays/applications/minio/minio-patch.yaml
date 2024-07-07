@@ -6,6 +6,9 @@ metadata:
   namespace: minio
 spec:
   values:
+    persistence:
+      storageClass: "nfs"
+      size: 500Gi
     ingress:
       enabled: true
       hostname: minio.infra.edge.ashman.world
