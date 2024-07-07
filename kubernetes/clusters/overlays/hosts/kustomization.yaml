@@ -1,3 +1,4 @@
+namespace: clusters
 resources: 
   - m920q-ec.yaml
   - m920q-cb.yaml

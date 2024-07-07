@@ -11,11 +11,11 @@ spec:
   healthChecks:
     - apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
       kind: Metal3Cluster
-      namespace: baremetal-prod
+      namespace: clusters
       name: baremetal-prod
     - apiVersion: cluster.x-k8s.io/v1beta1 
       kind: Cluster
-      namespace: baremetal-prod
+      namespace: clusters
       name: baremetal-prod
   postBuild:
     substitute:
