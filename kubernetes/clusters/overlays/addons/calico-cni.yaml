@@ -6,7 +6,6 @@ spec:
   clusterSelector:
     matchLabels:
       calicoCNI: enabled
-    matchLabels: {}
   releaseName: calico
   options:
     install:
