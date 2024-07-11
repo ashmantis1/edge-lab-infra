@@ -20,7 +20,7 @@
         mv /tmp/$BINARY /tmp/yq
         /tmp/yq -i '.spec.containers[0].command += "--oidc-client-id=kubelogin"' /etc/kubernetes/manifests/kube-apiserver.yaml
         /tmp/yq -i '.spec.containers[0].command += "--oidc-groups-claim=groups"' /etc/kubernetes/manifests/kube-apiserver.yaml
-        /tmp/yq -i '.spec.containers[0].command += "--oidc-issuer-url=https://dex.k8s.edge.ashman.world"' /etc/kubernetes/manifests/kube-apiserver.yaml
+        /tmp/yq -i '.spec.containers[0].command += "--oidc-issuer-url=https://dex.k8s.ashman.world"' /etc/kubernetes/manifests/kube-apiserver.yaml
         /tmp/yq -i '.spec.containers[0].command += "--oidc-username-claim=email"' /etc/kubernetes/manifests/kube-apiserver.yaml
 
 
