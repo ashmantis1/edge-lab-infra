@@ -6,3 +6,4 @@ resources:
 - minio.yaml
 - csi-driver-nfs.yaml
 - projectsveltos.yaml
+- cloudnative-pg.yaml
