@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=https://kubernetes-schemas.devbu.io/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+namespace: cloudnative-pg
+resources: 
+  - ../../../../bases/cloudnative-pg
+  - namespace.yaml
+patches: 
+  - target: 
+      kind: HelmRelease
+    path: ./cloudnative-pg-patch.yaml
