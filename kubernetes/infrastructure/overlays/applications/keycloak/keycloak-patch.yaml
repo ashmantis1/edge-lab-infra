@@ -24,12 +24,10 @@ spec:
       existingSecretPasswordKey: password
     ingress:
       enabled: true
-      ingressClassName: nginx
+      ingressClassName: traefik
       servicePort: https
       hostname: sso.infra.ashman.world
       annotations:
         cert-manager.io/cluster-issuer: "letsencrypt-prod"
-        nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-        nginx.ingress.kubernetes.io/proxy-ssl-verify: "off"
       tls: true
 
