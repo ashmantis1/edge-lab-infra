@@ -5,6 +5,7 @@ resources:
 - ../../../bases/keycloak
 - postgres.yaml
 - namespace.yaml
+- servertransport.yaml
 patches:
 - target:
     kind: HelmRelease

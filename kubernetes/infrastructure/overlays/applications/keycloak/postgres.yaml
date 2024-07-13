@@ -5,4 +5,5 @@ metadata:
 spec:
   instances: 2
   storage:
+    storageClass: nfs
     size: 1Gi
