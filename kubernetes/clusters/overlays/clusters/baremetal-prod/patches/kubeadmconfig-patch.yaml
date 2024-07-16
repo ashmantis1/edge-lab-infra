@@ -17,6 +17,6 @@
   path: /spec/template/spec/mounts/-
   value: 
     - LABEL=longhorn
-    - /var/lib/longhorn
+    - /var/lib/longhorn-secondary
     
     
