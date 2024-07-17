@@ -23,7 +23,7 @@ patches:
   patch: |
     - op: replace
       path: /spec/replicas
-      value: 4
+      value: 3
 - target: 
     kind: Cluster
   patch: | 
