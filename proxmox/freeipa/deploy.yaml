@@ -1,0 +1,10 @@
+# Ansible local host runner
+- name: Run Terraform
+  ansible.builtin.import_playbook: ./ansible/playbooks/create_infrastructure.yaml
+  tags: always
+- name: Setup Host 
+  ansible.builtin.import_playbook: ./ansible/playbooks/setup_host.yaml
+  tags: setup
+- name: IPA
+  ansible.builtin.import_playbook: ./ansible/playbooks/setup_ipa_server.yaml
+  tags: ipa

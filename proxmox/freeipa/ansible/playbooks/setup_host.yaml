@@ -1,0 +1,30 @@
+- name: Setup Hosts
+  hosts: freeipaservers
+  become: yes 
+  gather_facts: yes
+  vars:
+  tasks: 
+    - name: Get current hostname
+      ansible.builtin.command: hostname
+      register: hostname
+
+    - name: Set hostname 
+      ansible.builtin.hostname: 
+        name: '{{ ansible_hostname }}.{{dns_zone}}'
+    - name: Disable IPv6
+      ansible.posix.sysctl:
+        name: "{{ item }}"
+        value: 1
+        state: present
+        reload: yes
+      loop: 
+        - net.ipv6.conf.all.disable_ipv6
+        - net.ipv6.conf.default.disable_ipv6
+        - net.ipv6.conf.eth0.disable_ipv6
+        # - net.ipv6.conf.lo.disable_ipv6
+    - name: Enable Lo IPv6
+      ansible.posix.sysctl:
+        name: "net.ipv6.conf.lo.disable_ipv6"
+        value: 0
+        state: present
+        reload: yes
