@@ -28,6 +28,7 @@ resource "proxmox_vm_qemu" "freeipa-masters" {
   name = "${format("ipa%02s", count.index+1)}"
   desc = "Free IPA server - managed by Terraform"
   tags =  count.index == 0 ? "freeipa,freeipamaster" : "freeipa,freeipareplica"
+  onboot = true
 
   target_node = "${var.master_nodes[count.index]}"
   #vm_id     = var.vm_id + count.index

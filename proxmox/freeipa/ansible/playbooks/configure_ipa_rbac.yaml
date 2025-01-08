@@ -1,0 +1,28 @@
+- name: Configure IPA RBAC
+  hosts: ipa01
+  gather_facts: yes
+  module_defaults:
+    freeipa.ansible_freeipa.ipadnsrecord:
+      ipaadmin_password: "{{ ipaadmin_password }}"
+  tasks:
+    - name: Create Service Accounts
+      freeipa.ansible_freeipa.ipauser:
+        ipaadmin_password: "{{ ipaadmin_password }}"
+        update_password: on_create
+        users: "{{ ipa_service_accounts }}"
+
+    - name: Create IPA privileges
+      freeipa.ansible_freeipa.ipaprivilege:
+        ipaadmin_password: "{{ ipaadmin_password }}"
+        name: "{{ item.name }}"
+        permission: "{{ item.permission }}"
+      loop: "{{ ipa_privileges }}"
+
+    - name: Create IPA roles
+      freeipa.ansible_freeipa.iparole:
+        ipaadmin_password: "{{ ipaadmin_password }}"
+        name: "{{ item.name }}"
+        user: "{{ item.user }}"
+        privilege: "{{ item.privilege }}"
+      loop: "{{ ipa_roles }}"
+

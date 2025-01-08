@@ -25,13 +25,13 @@ master_cpu: 4
 master_memory: 4096
 disk_size: 30 # Disk size for root drive of VM in GB
 # User for ansible to use on the nodes
-ansible_user: asher
+ansible_user: cloud-user
 ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
 
-dns_zone: ashman.world
+dns_zone: flagstaff.ashman.world
 # IPA Server Details
-ipaserver_domain: ashman.world
-ipaserver_realm: ASHMAN.WORLD
+ipaserver_domain: flagstaff.ashman.world
+ipaserver_realm: FLAGSTAFF.ASHMAN.WORLD
 ipaserver_setup_dns: true
 ipaserver_setup_ca: true
 ipaserver_auto_forwarders: true
@@ -53,6 +53,40 @@ ipadm_password: !vault |
 ipaclient_force_join: true
 
 # IPA Replica Details
+ipareplica_allow_zone_overlap: true
 ipareplica_setup_dns: true
 ipareplica_setup_ca: true
 ipareplica_auto_forwarders: true
+
+ipa_service_accounts:
+  - name: svc-host-enroll
+    first: Host
+    last: Enroll
+    loginshell: "/sbin/nologin"
+    passwordexpiration: "2099-01-01 23:59:59"
+    password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          39643839663731386662303438363061346633393062663162376137333865633863636161616630
+          6364383539646366333630326130636638313336396335370a316135393466326336366366373734
+          31633264306164366138313965353664363164613365353436333765656130333839613463393433
+          3064623238373335370a303266626336316431613664626362646133356263373134656365363431
+          33386364386461663032623461663938393734616131363135613132333232636139
+
+ipa_privileges:
+  - name: "Host Enrollment"
+    permission:
+    - "System: Add Hosts"
+    - "System: Add krbPrincipalName to a Host"
+    - "System: Enroll a Host"
+    - "System: Manage Host Certificates"
+    - "System: Manage Host Enrollment Password"
+    - "System: Manage Host Keytab"
+    - "System: Manage Host Principals"
+
+ipa_roles:
+  - name: HostEnroll
+    user:
+      - svc-host-enroll
+    privilege:
+      - 'Host Enrollment'
+

@@ -5,6 +5,12 @@
 - name: Setup Host 
   ansible.builtin.import_playbook: ./ansible/playbooks/setup_host.yaml
   tags: setup
-- name: IPA
+- name: IPA Deployment
   ansible.builtin.import_playbook: ./ansible/playbooks/setup_ipa_server.yaml
   tags: ipa
+- name: IPA Security
+  ansible.builtin.import_playbook: ./ansible/playbooks/configure_ipa_security.yaml
+  tags: ipa, configure, security
+- name: IPA RBAC Resources
+  ansible.builtin.import_playbook: ./ansible/playbooks/configure_ipa_rbac.yaml
+  tags: ipa, configure, rbac

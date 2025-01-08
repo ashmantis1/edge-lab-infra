@@ -1,4 +1,4 @@
-- name: Setup Hosts
+- name: Setup Masters
   hosts: ipamaster
   become: yes 
   gather_facts: yes
@@ -6,10 +6,11 @@
   - role: freeipa.ansible_freeipa.ipaserver
     state: present
 
-- name: Setup Hosts
+- name: Setup Replicas
   hosts: ipareplica
   become: yes 
   gather_facts: yes
   roles: 
   - role: freeipa.ansible_freeipa.ipareplica
     state: present
+

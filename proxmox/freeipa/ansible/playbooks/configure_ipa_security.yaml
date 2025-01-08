@@ -1,0 +1,68 @@
+- name: Configure LDAP Attributes
+  hosts: ipaserver
+  gather_facts: yes
+  tasks:
+    - name: Disable LDAP Anonymous Bind
+      community.general.ldap_attrs:
+        dn: "cn=config"
+        attributes:
+          nsslapd-allow-anonymous-access: "rootdse"
+        state: exact
+        server_uri: "ldap://{{ ansible_host }}:389"
+        bind_dn: "cn=Directory Manager"
+        bind_pw: "{{ ipadm_password }}"
+        validate_certs: false
+        start_tls: true
+
+- name: Configure IPA
+  hosts: ipa01
+  gather_facts: yes
+  module_defaults:
+    freeipa.ansible_freeipa.ipadnsrecord:
+      ipaadmin_password: "{{ ipaadmin_password }}"
+    freeipa.ansible_freeipa.ipaselfservice:
+      ipaadmin_password: "{{ ipaadmin_password }}"
+    freeipa.ansible_freeipa.ipahbacrule:
+      ipaadmin_password: "{{ ipaadmin_password }}"
+  tasks:
+    - name: Delete Self service role
+      freeipa.ansible_freeipa.ipaselfservice:
+        name: "User Self service"
+        state: absent
+
+    - name: Create Self Service permission
+      freeipa.ansible_freeipa.ipaselfservice:
+        name: "Self Service Permissions"
+        action: selfservice
+        attribute:
+          - displayname
+        state: present
+    
+    - name: Disable Default Allow All rule
+      freeipa.ansible_freeipa.ipahbacrule:
+        name: "allow_all"
+        state: disabled
+
+    - name: Create HBAC Rule for IPA Admins to access any
+      freeipa.ansible_freeipa.ipahbacrule:
+        name: "admins_allow_all"
+        group:
+          - admins
+        hostcategory: all
+        servicecategory: all
+        state: present
+      
+
+
+    #    - name: Create records for IPA servers
+    #      freeipa.ansible_freeipa.ipadnsrecord:
+    #        zone_name: "{{ ipaserver_domain }}"
+    #        name: "{{ ansible_host }}."
+    #        #        create_reverse: true
+    #        a_rec:
+    #          - "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+
+
+      
+
+  

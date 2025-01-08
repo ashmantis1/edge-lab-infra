@@ -42,8 +42,9 @@
     ansible.builtin.pause:
       seconds: 30
 
-  - meta: refresh_inventory
   
+  - meta: refresh_inventory
+
   - ansible.builtin.add_host: 
       name: "{{ item }}.{{ dns_zone }}"
       group: ipaserver
