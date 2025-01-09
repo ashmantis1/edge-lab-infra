@@ -14,3 +14,10 @@
   - role: freeipa.ansible_freeipa.ipareplica
     state: present
 
+- name: Configure SSSD Authselect
+  hosts: freeipaservers
+  become: yes
+  gather_facts: yes
+  tasks:
+    - name: Run authselect
+      ansible.builtin.command: authselect select sssd with-sudo with-mkhomedir

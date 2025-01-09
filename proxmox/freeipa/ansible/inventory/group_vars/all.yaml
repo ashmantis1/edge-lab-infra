@@ -58,6 +58,28 @@ ipareplica_setup_dns: true
 ipareplica_setup_ca: true
 ipareplica_auto_forwarders: true
 
+ipa_dns:
+  config:
+    forwarders:
+      - ip_address: 1.1.1.1
+      - ip_address: 8.8.8.8
+  reverse_zones:
+    - ip: 10.140.0.0/22
+      dynamic_update: true
+      allow_sync_ptr: true
+  zones:
+    - name: svc.ashman.world
+      dynamic_update: true
+      allow_sync_ptr: true
+      skip_overlap_check: false
+    - name: k8s.ashman.world
+      dynamic_update: true
+      allow_sync_ptr: true
+      skip_overlap_check: false
+    - name: ashman.world
+      dynamic_update: true
+      allow_sync_ptr: true
+      skip_overlap_check: true
 ipa_service_accounts:
   - name: svc-host-enroll
     first: Host

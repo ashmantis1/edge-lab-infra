@@ -1,6 +1,9 @@
 # Ansible local host runner
 - name: Run Terraform
   ansible.builtin.import_playbook: ./ansible/playbooks/create_infrastructure.yaml
+  tags: infrastructure
+- name: Setup Inventory
+  ansible.builtin.import_playbook: ./ansible/playbooks/setup_inventory.yaml
   tags: always
 - name: Setup Host 
   ansible.builtin.import_playbook: ./ansible/playbooks/setup_host.yaml
@@ -14,3 +17,9 @@
 - name: IPA RBAC Resources
   ansible.builtin.import_playbook: ./ansible/playbooks/configure_ipa_rbac.yaml
   tags: ipa, configure, rbac
+- name: IPA DNS Resources
+  ansible.builtin.import_playbook: ./ansible/playbooks/configure_ipa_dns.yaml
+  tags: ipa, configure, dns
+- name: Final config
+  ansible.builtin.import_playbook: ./ansible/playbooks/final.yaml
+  tags: ipa, configure, final
