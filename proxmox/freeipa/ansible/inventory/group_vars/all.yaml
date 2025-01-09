@@ -80,6 +80,7 @@ ipa_dns:
       dynamic_update: true
       allow_sync_ptr: true
       skip_overlap_check: true
+
 ipa_service_accounts:
   - name: svc-host-enroll
     first: Host
@@ -111,4 +112,27 @@ ipa_roles:
       - svc-host-enroll
     privilege:
       - 'Host Enrollment'
+
+ipa_usergroups:
+  - name: services-admins
+  - name: k8s-admins
+  - name: media-users
+ipa_hostgroups:
+  - name: services
+  - name: kubernetes
+
+ipa_automember_rules:
+  - name: services
+    description: "Automember condition for svc domain"
+    automember_type: hostgroup
+    inclusive:
+      - key: fqdn
+        expression: ".*.svc.ashman.world"
+  - name: kubernetes
+    description: "Automember condition for k8s domain"
+    automember_type: hostgroup
+    inclusive:
+      - key: fqdn
+        expression: ".*.k8s.ashman.world"
+
 

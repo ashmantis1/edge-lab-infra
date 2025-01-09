@@ -7,22 +7,41 @@
   tasks:
     - name: Create Service Accounts
       freeipa.ansible_freeipa.ipauser:
-        ipaadmin_password: "{{ ipaadmin_password }}"
         update_password: on_create
         users: "{{ ipa_service_accounts }}"
+        ipaadmin_password: "{{ ipaadmin_password }}"
 
     - name: Create IPA privileges
       freeipa.ansible_freeipa.ipaprivilege:
-        ipaadmin_password: "{{ ipaadmin_password }}"
         name: "{{ item.name }}"
         permission: "{{ item.permission }}"
+        ipaadmin_password: "{{ ipaadmin_password }}"
       loop: "{{ ipa_privileges }}"
 
     - name: Create IPA roles
       freeipa.ansible_freeipa.iparole:
-        ipaadmin_password: "{{ ipaadmin_password }}"
         name: "{{ item.name }}"
         user: "{{ item.user }}"
         privilege: "{{ item.privilege }}"
+        ipaadmin_password: "{{ ipaadmin_password }}"
       loop: "{{ ipa_roles }}"
+
+    - name: Create IPA Hostgroups
+      freeipa.ansible_freeipa.ipahostgroup:
+        name: "{{ item.name }}"
+        state: present
+        ipaadmin_password: "{{ ipaadmin_password }}"
+      loop: "{{ ipa_hostgroups }}"
+
+    - name: Create automember rules
+      freeipa.ansible_freeipa.ipaautomember:
+        name: "{{ item.name }}"
+        description: "{{ item.description | default ('created by ansible') }}"
+        automember_type: "{{ item.automember_type }}"
+        inclusive: "{{ item.inclusive | default([]) }}"
+        exclusive: "{{ item.exclusive | default([]) }}"
+        state: present
+        ipaadmin_password: "{{ ipaadmin_password }}"
+      loop: "{{ ipa_automember_rules }}"
+
 
