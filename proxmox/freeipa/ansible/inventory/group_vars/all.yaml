@@ -19,7 +19,6 @@ dns_server: 1.1.1.1
 #These are the nodes that the vm's will be deployed to, in sequential order, eg. master01 will be deployed to master_nodes[0]. Use proxmox node names
 master_nodes: ["vm01","vm01","vm01"] # List of nodes to deploy the masters to must match master count (max )
 master_count: 3
-vm_id: 100
 vm_template_id: 9000 #fedora41
 master_cpu: 4
 master_memory: 4096
@@ -117,6 +116,8 @@ ipa_usergroups:
   - name: services-admins
   - name: k8s-admins
   - name: media-users
+  - name: media-admins
+
 ipa_hostgroups:
   - name: services
   - name: kubernetes
@@ -135,4 +136,35 @@ ipa_automember_rules:
       - key: fqdn
         expression: ".*.k8s.ashman.world"
 
+ipa_hbac_rules:
+  - name: services_admins_allow
+    description: "Allow services-admins access to services hostgroup"
+    hostgroup:
+      - services
+    group:
+      - services-admins
+    servicecategory: all
+  - name: k8s_admins_allow
+    description: "Allow k8s-admins access to kubernetes hostgroup"
+    hostgroup:
+      - kubernetes
+    group:
+      - k8s-admins
+    servicecategory: all
+
+ipa_sudo_rules:
+  - name: services_admin_all
+    description: "Allow services-admins to run sudo on services hosts"
+    hostgroup:
+      - services
+    group:
+      - services-admins
+    cmdcategory: all
+  - name: k8s_admins_all
+    description: "Allow k8s-admins run sudo on kubernetes hostrgoup"
+    hostgroup:
+      - kubernetes
+    group:
+      - k8s-admins
+    cmdcategory: all
 

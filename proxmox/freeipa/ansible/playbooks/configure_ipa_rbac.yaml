@@ -33,6 +33,11 @@
         ipaadmin_password: "{{ ipaadmin_password }}"
       loop: "{{ ipa_hostgroups }}"
 
+    - name: Create IPA User Groups
+      freeipa.ansible_freeipa.ipagroup:
+        groups: "{{ ipa_usergroups }}"
+        ipaadmin_password: "{{ ipaadmin_password }}"
+
     - name: Create automember rules
       freeipa.ansible_freeipa.ipaautomember:
         name: "{{ item.name }}"
@@ -43,5 +48,23 @@
         state: present
         ipaadmin_password: "{{ ipaadmin_password }}"
       loop: "{{ ipa_automember_rules }}"
+
+    - name: Create HBAC Rules
+      freeipa.ansible_freeipa.ipahbacrule:
+        name: "{{ item.name }}"
+        description: "{{ item.description | default ('created by ansible') }}"
+        hostgroup: "{{ item.hostgroup }}"
+        group: "{{ item.group }}"
+        servicecategory: "{{ item.servicecategory | default('') }}"
+        ipaadmin_password: "{{ ipaadmin_password }}"
+      loop: "{{ ipa_hbac_rules }}"
+
+    - name: Create Sudo Rules
+      freeipa.ansible_freeipa.ipasudorule:
+        sudorules: "{{ ipa_sudo_rules }}"
+        ipaadmin_password: "{{  ipaadmin_password }}"
+
+      loop: "{{ ipa_hbac_rules }}"
+
 
 

@@ -43,16 +43,6 @@
         name: "allow_all"
         state: disabled
 
-    - name: Create HBAC Rule for IPA Admins to access any
-      freeipa.ansible_freeipa.ipahbacrule:
-        name: "admins_allow_all"
-        group:
-          - admins
-        hostcategory: all
-        servicecategory: all
-        state: present
-      
-
 
     #    - name: Create records for IPA servers
     #      freeipa.ansible_freeipa.ipadnsrecord:
