@@ -20,6 +20,10 @@
 - name: IPA DNS Resources
   ansible.builtin.import_playbook: ./ansible/playbooks/configure_ipa_dns.yaml
   tags: ipa, configure, dns
+- name: IPA Global Config
+  ansible.builtin.import_playbook: ./ansible/playbooks/configure_ipa_global_config.yaml
+  tags: ipa, configure, global
+- name: IPA RBAC Resources
 - name: Final config
   ansible.builtin.import_playbook: ./ansible/playbooks/final.yaml
   tags: ipa, configure, final

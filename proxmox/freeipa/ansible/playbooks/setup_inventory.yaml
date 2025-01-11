@@ -5,4 +5,4 @@
   - ansible.builtin.add_host: 
       name: "{{ item }}.{{ dns_zone }}"
       group: ipaserver
-    loop: "{{ groups['freeipaservers'] | list }}"
+    loop: "{{ groups['freeipaservers'] | list  }}"

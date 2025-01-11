@@ -1,7 +1,6 @@
 - name: Deploy infrastructure
   hosts: localhost
   tasks:
-
   - name: Create cloudinit directory
     ansible.builtin.file: 
       name: ../../terraform/cloudinit
@@ -32,14 +31,24 @@
         master_cpu: "{{ master_cpu }}"
         master_memory: "{{ master_memory }}"
         disk_size: "{{ disk_size }}"
+        storage_pool: "{{ storage_pool }}"
+        bridge: "{{ bridge }}"
+        tag: "{{ tag }}"
         #     cloud_image: "{{ cloud_image_url }}"
-        vm_id: "{{ vm_id }}"
+        #        vm_id: "{{ vm_id }}"
         service_name: "{{ service_name }}"
         #reverse_zone: "{{ reverse_zone }}"
     register: tf_out 
      
-  - name: Pause for startup
+  - meta: refresh_inventory
+
+- name: Wait for hosts to come up
+  hosts: freeipaservers
+  gather_facts: false
+  tasks:
+  - name: Wait for freeipa servers to come up
     ansible.builtin.pause:
       seconds: 30
-
-  - meta: refresh_inventory
+  #    ansible.builtin.wait_for_connection:
+  #      delay: 5
+  #      timeout: 60

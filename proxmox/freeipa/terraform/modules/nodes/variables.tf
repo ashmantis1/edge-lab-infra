@@ -24,11 +24,6 @@ variable "vm_template_id" {
     type = number
 }
 
-variable "vm_id" {
-    description = "VM ID to use for the master node"
-    type = number 
-}
-
 variable "vm_user_ssh_key" {
     description = "User to create with cloud init"
     type = string 
@@ -67,7 +62,23 @@ variable "disk_size" {
     type = number 
 }
 
-//variable "cloud_image" {
-//    description = "Cloud image to use for the master nodes"
-//    type = string 
-//}
+variable "service_name" {
+    description = "Service name"
+    type = string 
+}
+
+variable "storage_pool" {
+    description = "Storage pool name"
+    type = string 
+}
+
+variable "tag" {
+    description = "Vlan tag"
+    default = 0
+    type = number 
+}
+
+variable "bridge" {
+    description = "Network bridge"
+    type = string
+}

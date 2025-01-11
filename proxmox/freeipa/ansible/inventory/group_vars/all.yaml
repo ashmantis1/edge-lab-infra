@@ -1,36 +1,38 @@
 #Proxmox details
-proxmox_host: "10.100.0.100:8006/api2/json"
+proxmox_host: "10.110.0.50:8006/api2/json"
 proxmox_user: "root@pam!ansible"
-
 proxmox_password: !vault |
           $ANSIBLE_VAULT;1.1;AES256
-          34643535386331363663393538303063643231386537313461663037626565393066343865383466
-          3666316333633632323932386435656633353439613866330a623334353930633633643034383733
-          38376261666362373637346135386534323037333239346236636638383739336463666332306430
-          3863323264393336610a386239356438323961643463626261666338323463376365616434623231
-          39643132333032333231363063346334383332323838306565366532363433633764333530333738
-          3130333931346331656661343631343735623437316661643163
+          64313831326334663464376666363930303335663737666165356437653535333231333164636664
+          6538666134353933363839386430393363353638643764380a313233303066316538363866663763
+          33303138373331636534346132326664303962373132356635373831643936396463373538396438
+          3837623238316138370a353137616462633161376230343634303665653261653261643434383864
+          39633564663134386434623331313330326565613666353362316161623237653562363636343266
+          3963643731313831643165613262653135643461613030383734
+proxmox_datastore_id: "local-lvm"
 
-proxmox_datastore_id: "storage"
 service_name: ipa
 #Node details
 ssh_pub_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF6leLiXjd46rW2/bKTyFtEBXv8A47Ti0kd49CcexgLy asher@fedora
 dns_server: 1.1.1.1
 #These are the nodes that the vm's will be deployed to, in sequential order, eg. master01 will be deployed to master_nodes[0]. Use proxmox node names
-master_nodes: ["vm01","vm01","vm01"] # List of nodes to deploy the masters to must match master count (max )
-master_count: 3
+master_nodes: ["vm01","vm02"] # List of nodes to deploy the masters to must match master count (max )
+master_count: 2
 vm_template_id: 9000 #fedora41
 master_cpu: 4
 master_memory: 4096
 disk_size: 30 # Disk size for root drive of VM in GB
+storage_pool: "local-lvm"
+bridge: "vmbr0"
+tag: 4000
 # User for ansible to use on the nodes
 ansible_user: cloud-user
 ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
 
-dns_zone: flagstaff.ashman.world
+dns_zone: infra.ashman.world
 # IPA Server Details
-ipaserver_domain: flagstaff.ashman.world
-ipaserver_realm: FLAGSTAFF.ASHMAN.WORLD
+ipaserver_domain: infra.ashman.world
+ipaserver_realm: INFRA.ASHMAN.WORLD
 ipaserver_setup_dns: true
 ipaserver_setup_ca: true
 ipaserver_auto_forwarders: true
@@ -66,6 +68,9 @@ ipa_dns:
     - ip: 10.140.0.0/22
       dynamic_update: true
       allow_sync_ptr: true
+    - ip: 10.110.0.0/24
+      dynamic_update: true
+      allow_sync_ptr: true
   zones:
     - name: svc.ashman.world
       dynamic_update: true
@@ -79,6 +84,33 @@ ipa_dns:
       dynamic_update: true
       allow_sync_ptr: true
       skip_overlap_check: true
+  records:
+    - zone_name: infra.ashman.world
+      name: qdev01
+      record_type: A
+      record_value:
+        - 10.110.0.53
+    - zone_name: infra.ashman.world
+      name: vm01
+      record_type: A
+      record_value:
+        - 10.110.0.50
+    - zone_name: infra.ashman.world
+      name: vm02
+      record_type: A
+      record_value:
+        - 10.110.0.51
+    - zone_name: infra.ashman.world
+      name: pmtp
+      record_type: A
+      record_value:
+        - 10.110.0.53
+    - zone_name: infra.ashman.world
+      name: storage
+      record_type: A
+      record_value:
+        - 10.110.0.20
+          
 
 ipa_service_accounts:
   - name: svc-host-enroll
@@ -115,12 +147,14 @@ ipa_roles:
 ipa_usergroups:
   - name: services-admins
   - name: k8s-admins
+  - name: infra-admins
   - name: media-users
   - name: media-admins
 
 ipa_hostgroups:
   - name: services
   - name: kubernetes
+  - name: infrastructure
 
 ipa_automember_rules:
   - name: services
@@ -128,13 +162,19 @@ ipa_automember_rules:
     automember_type: hostgroup
     inclusive:
       - key: fqdn
-        expression: ".*.svc.ashman.world"
+        expression: "^.*.svc.ashman.world$"
   - name: kubernetes
     description: "Automember condition for k8s domain"
     automember_type: hostgroup
     inclusive:
       - key: fqdn
-        expression: ".*.k8s.ashman.world"
+        expression: "^.*.k8s.ashman.world$"
+  - name: infrastructure
+    description: "Automember condition for infrastructure domain"
+    automember_type: hostgroup
+    inclusive:
+      - key: fqdn
+        expression: "^.*.infra.ashman.world$"
 
 ipa_hbac_rules:
   - name: services_admins_allow
@@ -150,6 +190,13 @@ ipa_hbac_rules:
       - kubernetes
     group:
       - k8s-admins
+    servicecategory: all
+  - name: infra_admins_allow
+    description: "Allow infra-admins access to infrastructure hostgroup"
+    hostgroup:
+      - infrastructure
+    group:
+      - infra-admins
     servicecategory: all
 
 ipa_sudo_rules:
@@ -167,4 +214,12 @@ ipa_sudo_rules:
     group:
       - k8s-admins
     cmdcategory: all
+  - name: infra_admins_all
+    description: "Allow infra-admins run sudo on infrastructure hostrgoup"
+    hostgroup:
+      - infrastructure
+    group:
+      - infra-admins
+    cmdcategory: all
+
 

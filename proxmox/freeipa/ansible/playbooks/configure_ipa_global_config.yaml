@@ -1,0 +1,8 @@
+- name: Configure IPA Global Config options
+  hosts: ipa01
+  gather_facts: yes
+  tasks:
+    - name: Apply Configuration
+      freeipa.ansible_freeipa.ipaconfig:
+        ipaadmin_password: "{{ ipaadmin_password }}"
+        defaultshell: /bin/bash

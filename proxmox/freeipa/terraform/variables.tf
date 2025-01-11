@@ -41,10 +41,6 @@ variable "vm_user_ssh_key" {
     type = string 
 }
 
-variable "vm_id" {
-    description = "VM ID to use for the master node"
-    type = number 
-}
 
 variable "master_nodes" {
     description = "List of master nodes"
@@ -69,17 +65,23 @@ variable "disk_size" {
     type = number 
 }
 
-//variable "cloud_image" {
-//    description = "Cloud image to use for the master nodes"
-//    type = string 
-//}
-
 variable "service_name" {
     description = "Service name"
     type = string 
 }
 
-//variable "reverse_zone" {
-//    description = "Reverse zone name"
-//    type = string 
-//}
+variable "storage_pool" {
+    description = "Storage pool name"
+    type = string 
+}
+
+variable "bridge" {
+    description = "Network bridge"
+    type = string 
+}
+
+variable "tag" {
+    description = "Vlan tag"
+    default = 0
+    type = number 
+}

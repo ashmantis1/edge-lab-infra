@@ -32,4 +32,9 @@
         state: present
       loop: "{{ ipa_dns.zones }}"
 
+    - name: Create DNS records
+      freeipa.ansible_freeipa.ipadnsrecord:
+        ipaadmin_password: "{{ ipaadmin_password }}"
+        records: "{{ ipa_dns.records }}"
+
 

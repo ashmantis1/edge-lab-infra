@@ -16,16 +16,17 @@ module "nodes" {
     vm_template_id = var.vm_template_id
     vm_user = var.vm_user
     vm_user_ssh_key = var.vm_user_ssh_key
-    vm_id = var.vm_id
-
+    service_name = var.service_name
+    storage_pool = var.storage_pool
     dns_server = var.dns_server
-
     // vm details
     master_nodes = var.master_nodes
     master_count = var.master_count
     master_cpu = var.master_cpu
     master_memory = var.master_memory
     disk_size = var.disk_size
+    bridge = var.bridge
+    tag = var.tag
 #    cloud_image = var.cloud_image
 
 }
