@@ -1,5 +1,4 @@
 ---
 # defaults file for proxmox_nodes
-
 state: present
 proxmox_node_workdir: "/tmp/ansible"

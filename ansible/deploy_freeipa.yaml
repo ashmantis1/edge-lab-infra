@@ -70,32 +70,20 @@
         state: present
         reload: true
 
+    - name: Setup IPA Master
+      ansible.builtin.include_role:
+        name: freeipa.ansible_freeipa.ipaserver
+      vars:
+        state: present
+      when: inventory_hostname in groups['ipamaster']
 
-- name: Setup Masters
-  hosts: ipamaster
-  become: true 
-  gather_facts: true
-  vars_files:
-    - inventory/vars/freeipa.yaml
-  roles: 
-  - role: freeipa.ansible_freeipa.ipaserver
-    state: present
+    - name: Setup IPA Replica
+      ansible.builtin.include_role:
+        name: freeipa.ansible_freeipa.ipareplica
+      vars:
+        state: present
+      when: inventory_hostname in groups['ipareplica']
 
-- name: Setup Replicas
-  hosts: ipareplica
-  become: true 
-  gather_facts: true
-  vars_files:
-    - inventory/vars/freeipa.yaml
-  roles: 
-  - role: freeipa.ansible_freeipa.ipareplica
-    state: present
-
-- name: Configure IPA
-  hosts: freeipaservers
-  become: true
-  gather_facts: yes
-  vars_files:
-    - inventory/vars/freeipa.yaml
-  roles:
-    - freeipa
+    - name: Configure IPA
+      ansible.builtin.include_role:
+        name: freeipa

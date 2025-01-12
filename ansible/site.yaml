@@ -1,0 +1,4 @@
+- name: IPA Deployment
+  ansible.builtin.import_playbook: deploy_freeipa.yaml
+- name: Pihole Deployment
+  ansible.builtin.import_playbook: deploy_pihole.yaml
