@@ -1,0 +1,10 @@
+# Ansible local host runner
+- name: Run Terraform
+  ansible.builtin.import_playbook: ./ansible/playbooks/create_infrastructure.yaml
+  tags: infrastructure
+- name: Disable systemd-resolved
+  ansible.builtin.import_playbook: ./ansible/playbooks/disable_resolved.yaml
+  tags: bootstrap
+- name: Deploy Pihole
+  ansible.builtin.import_playbook: ./ansible/playbooks/bootstrap_pihole.yaml
+  tags: bootstrap

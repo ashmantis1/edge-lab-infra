@@ -41,3 +41,5 @@ terraform.rc
 #Ignore application specific files
 user-data.yaml
 infrastructure/kubernetes/terraform/cloudinit/user-data.yaml
+
+*buffer/*

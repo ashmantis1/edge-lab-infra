@@ -1,0 +1,20 @@
+- name: Delete Self service role
+  freeipa.ansible_freeipa.ipaselfservice:
+    name: "User Self service"
+    state: absent
+    ipaadmin_password: "{{ ipaadmin_password }}"
+
+- name: Create Self Service permission
+  freeipa.ansible_freeipa.ipaselfservice:
+    name: "Self Service Permissions"
+    action: selfservice
+    attribute:
+      - displayname
+    state: present
+    ipaadmin_password: "{{ ipaadmin_password }}"
+
+- name: Disable Default Allow All rule
+  freeipa.ansible_freeipa.ipahbacrule:
+    name: "allow_all"
+    state: disabled
+    ipaadmin_password: "{{ ipaadmin_password }}"

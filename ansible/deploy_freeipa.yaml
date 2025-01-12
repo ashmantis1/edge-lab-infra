@@ -1,0 +1,101 @@
+- name: Deploy infrastructure
+  hosts: localhost
+  vars_files:
+    - inventory/vars/freeipa.yaml
+  tasks:
+    - name: Deploy nodes on proxmox
+      ansible.builtin.include_role:
+        name: proxmox_nodes
+      vars:
+        state: present
+
+    - meta: refresh_inventory
+
+    - name: Add hosts to ipaserver hostgroup
+      ansible.builtin.add_host: 
+        name: "{{ item }}.{{ dns_zone }}"
+        group: ipaserver
+      loop: "{{ groups['freeipaservers'] | list  }}"
+
+    - name: Wait for hosts to boot up
+      ansible.builtin.pause:
+        seconds: 30
+
+- name: Setup hosts
+  hosts: freeipaservers
+  gather_facts: true
+  become: true
+  vars_files:
+    - inventory/vars/freeipa.yaml
+  tasks:
+    - name: Set hostname 
+      ansible.builtin.hostname: 
+        name: '{{ ansible_hostname }}.{{ dns_zone }}'
+
+    - name: Fix /etc/hosts
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        regexp: '^127.0.0.1 {{ ansible_hostname }}.{{ dns_zone }} {{ ansible_hostname }}$'
+        line: '{{ ansible_default_ipv4.address }} {{ ansible_hostname }}.{{ dns_zone}} {{ ansible_hostname }}'
+
+    - name: Fix /etc/hosts
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        regexp: '^::1 {{ ansible_hostname }}.{{ dns_zone }} {{ ansible_hostname }}$'
+        state: absent
+
+    - name: Add replicas to /etc/hosts
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        line: "{{ hostvars[item].ansible_default_ipv4.address }} {{ item }}.{{ dns_zone }}"
+        state: present
+      when: item != ansible_hostname
+      loop: "{{ groups['freeipaservers'] | list }}"
+
+    - name: Disable IPv6
+      ansible.posix.sysctl:
+        name: "{{ item }}"
+        value: 1
+        state: present
+        reload: true
+      loop: 
+        - net.ipv6.conf.all.disable_ipv6
+        - net.ipv6.conf.default.disable_ipv6
+        - net.ipv6.conf.eth0.disable_ipv6
+
+    - name: Enable Lo IPv6
+      ansible.posix.sysctl:
+        name: "net.ipv6.conf.lo.disable_ipv6"
+        value: 0
+        state: present
+        reload: true
+
+
+- name: Setup Masters
+  hosts: ipamaster
+  become: true 
+  gather_facts: true
+  vars_files:
+    - inventory/vars/freeipa.yaml
+  roles: 
+  - role: freeipa.ansible_freeipa.ipaserver
+    state: present
+
+- name: Setup Replicas
+  hosts: ipareplica
+  become: true 
+  gather_facts: true
+  vars_files:
+    - inventory/vars/freeipa.yaml
+  roles: 
+  - role: freeipa.ansible_freeipa.ipareplica
+    state: present
+
+- name: Configure IPA
+  hosts: freeipaservers
+  become: true
+  gather_facts: yes
+  vars_files:
+    - inventory/vars/freeipa.yaml
+  roles:
+    - freeipa

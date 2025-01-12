@@ -1,0 +1,42 @@
+#Proxmox details
+proxmox_host: "vm01.infra.ashman.world:8006/api2/json"
+proxmox_user: "root@pam!ansible"
+proxmox_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          64313831326334663464376666363930303335663737666165356437653535333231333164636664
+          6538666134353933363839386430393363353638643764380a313233303066316538363866663763
+          33303138373331636534346132326664303962373132356635373831643936396463373538396438
+          3837623238316138370a353137616462633161376230343634303665653261653261643434383864
+          39633564663134386434623331313330326565613666353362316161623237653562363636343266
+          3963643731313831643165613262653135643461613030383734
+proxmox_datastore_id: "local-lvm"
+service_name: pihole
+#Node details
+ssh_pub_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF6leLiXjd46rW2/bKTyFtEBXv8A47Ti0kd49CcexgLy asher@fedora
+dns_server: 10.110.0.10
+#These are the nodes that the vm's will be deployed to, in sequential order, eg. master01 will be deployed to master_nodes[0]. Use proxmox node names
+master_nodes: ["vm01","vm02"] # List of nodes to deploy the masters to must match master count (max )
+master_count: 2
+vm_template_id: 9000 #fedora41
+master_cpu: 2
+master_memory: 2048
+disk_size: 30 # Disk size for root drive of VM in GB
+storage_pool: "local-lvm"
+bridge: "vmbr0"
+vm_tags: "infra,ipa"
+tag: 4000
+dns_zone: infra.ashman.world
+
+# Ansible config
+## General Settings
+ansible_user: svc-ansible-infra
+ansible_ssh_pass: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          36333164333964313338343636363565616365626234623533393130333637393233333636636438
+          6436613861353734306635383634303733323735623034650a343063656265643338643964616332
+          32666136616130646233626135366165376466353464326363663161616637356465666461613264
+          6563303435396561330a633433313761333562356532323262343831306564626230306330306435
+          32373936656530613139623235646533316464613831323963373330376139373864
+ansible_become_pass: "{{ ansible_ssh_pass }}"
+ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+timezone: "Australia/Melbourne"

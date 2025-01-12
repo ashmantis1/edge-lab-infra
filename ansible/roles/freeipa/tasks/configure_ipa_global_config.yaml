@@ -1,0 +1,4 @@
+- name: Apply Configuration
+  freeipa.ansible_freeipa.ipaconfig:
+    ipaadmin_password: "{{ ipaadmin_password }}"
+    defaultshell: /bin/bash

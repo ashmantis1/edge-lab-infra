@@ -1,0 +1,18 @@
+- name: Add recursive allow to config
+  ansible.builtin.lineinfile:
+    dest: /etc/named/ipa-options-ext.conf
+    line: 'allow-recursion { any; };'
+  notify: Restart named
+
+- name: Disable LDAP Anonymous Bind
+  community.general.ldap_attrs:
+    dn: "cn=config"
+    attributes:
+      nsslapd-allow-anonymous-access: "rootdse"
+    state: exact
+    server_uri: "ldap://{{ ansible_host }}:389"
+    bind_dn: "cn=Directory Manager"
+    bind_pw: "{{ ipadm_password }}"
+    validate_certs: false
+    start_tls: true
+

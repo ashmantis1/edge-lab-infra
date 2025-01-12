@@ -1,0 +1,10 @@
+- name: Deploy infrastructure
+  hosts: localhost
+  vars_files:
+    - inventory/vars/freeipa.yaml
+  tasks:
+    - name: Deploy nodes on proxmox
+      ansible.builtin.include_role:
+        name: proxmox_nodes
+      vars:
+        state: absent

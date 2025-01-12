@@ -1,0 +1,58 @@
+## Pi-hole HA (keepalived) Settings
+pihole_vip_ipv4: "10.110.0.100/24" # Floating (virtual) IPv4 for the failover between Pi-hole nodes. You should use it as a target in your DNS settings.
+enable_ipv6_support: false
+pihole_vip_ipv6: "fe80::53/64" # Floating (virtual) IPv6 for the failover between Pi-hole nodes. You should use it as a target in your DNS settings.
+
+## Gravity Sync Settings
+## https://github.com/vmstan/gravity-sync
+enable_gravity_sync: true
+gravity_sync_frequency: "hour" # https://github.com/vmstan/gravity-sync/wiki/Automation#speed-settings
+
+## Pi-hole as a recursive DNS server
+## https://docs.pi-hole.net/guides/dns/unbound/
+enable_unbound: false
+unbound_verbosity: 0 # https://docs.pi-hole.net/guides/dns/unbound/#add-logging-to-unbound
+
+## Pi-hole initial configuration setupVars.conf
+pihole_version: 5.18.4 # https://github.com/pi-hole/pi-hole/releases
+pihole_install_web_interface: "true"
+pihole_install_web_server: "true"
+pihole_lighthttpd_enabled: "true"
+pihole_privacy_level: "0" # https://docs.pi-hole.net/ftldns/privacylevels/
+pihole_interface: "eth0"
+pihole_query_logging: "false"
+pihole_dnsmasq_listening: "all" # local/all
+pihole_dns_1: "1.1.1.1" # This setting will be ignored when enable_unbound is set to true
+pihole_dns_2: "8.8.8.8" # This setting will be ignored when enable_unbound is set to true
+pihole_fqdn_required: "true"
+pihole_bogus_priv: "true"
+pihole_dns_cache_size: "10000" # https://docs.pi-hole.net/ftldns/dns-cache/
+pihole_dnssec_enabled: "false" # Enable DNSSEC support
+pihole_rev_server: "false" # Enable DNS conditional forwarding for device name resolution
+pihole_rev_server_domain: "homelab.local" # If conditional forwarding is enabled, set the domain of the local network router
+pihole_rev_server_target: "10.0.20.1" # If conditional forwarding is enabled, set the IP of the local network router
+pihole_rev_server_cidr: "10.0.20.0/24" # If conditional forwarding is enabled, set the reverse DNS zone (e.g. 192.168.0.0/24)
+
+## Pi-hole general configuration pihole-FTL.conf
+## https://docs.pi-hole.net/ftldns/configfile/
+pihole_webpassword: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          35386237346466653165636433663330313839636332333039393332363534303230343638376166
+          3237663831383233363864306562333537363365323138650a653361346162333832656236646438
+          30653730333737333538373565336561666631626666343137386365366565336436636533343734
+          3233653465396665380a623835616138373836646363383539613735393732316632343965326233
+          32626234316431613537653932626261333061343934396666623861356635663634
+pihole_rate_limit: "1000/60" # https://docs.pi-hole.net/ftldns/configfile/#rate_limit
+pihole_reply_when_busy: "DROP" # https://docs.pi-hole.net/ftldns/configfile/#reply_when_busy
+pihole_block_icloud_pr: "true" # https://docs.pi-hole.net/ftldns/configfile/#icloud_private_relay
+pihole_socket_listening: "all" # https://docs.pi-hole.net/ftldns/configfile/#socket_listening
+pihole_ptr: "HOSTNAMEFQDN" # https://docs.pi-hole.net/ftldns/configfile/#pihole_ptr
+
+## pihole-updatelists Settings
+## https://github.com/jacklul/pihole-updatelists
+## https://firebog.net/
+enable_pihole_updatelists: true
+pihole_updatelists_adlists_url: "https://v.firebog.net/hosts/lists.php?type=nocross" # https://firebog.net/
+pihole_updatelists_whitelist_url: "https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/whitelist.txt" # https://github.com/anudeepND/whitelist
+pihole_updatelists_regex_blacklist_url: "https://raw.githubusercontent.com/mmotti/pihole-regex/master/regex.list" # https://github.com/mmotti/pihole-regex
+pihole_updatelists_regex_whitelist_url: "https://raw.githubusercontent.com/mmotti/pihole-regex/master/whitelist.list" # https://github.com/mmotti/pihole-regex

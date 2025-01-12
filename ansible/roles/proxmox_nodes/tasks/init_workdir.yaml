@@ -1,0 +1,9 @@
+- name: Create working directory variable
+  ansible.builtin.set_fact:
+    workdir: "{{ proxmox_node_workdir }}/{{ service_name }}"
+
+- name: Create workdir
+  ansible.builtin.file:
+    state: directory
+    path: "{{ workdir }}"
+

@@ -1,0 +1,20 @@
+# Ansible local host runner
+- name: IPA Security
+  ansible.builtin.include_tasks: configure_ipa_security.yaml
+  run_once: true
+  tags: ipa, configure, security
+- name: IPA RBAC Resources
+  ansible.builtin.include_tasks: configure_ipa_rbac.yaml
+  run_once: true
+  tags: ipa, configure, rbac
+- name: IPA DNS Resources
+  ansible.builtin.include_tasks: configure_ipa_dns.yaml
+  run_once: true
+  tags: ipa, configure, dns
+- name: IPA Global Config
+  ansible.builtin.include_tasks: configure_ipa_global_config.yaml
+  run_once: true
+  tags: ipa, configure, global
+- name: Final config
+  ansible.builtin.include_tasks: configure_all_hosts.yaml 
+  tags: ipa, configure, final

@@ -1,0 +1,35 @@
+- name: destroy freeipa nodes on proxmox
+  community.general.terraform: 
+    project_path: "{{ role_path }}/files/terraform"
+    state: absent
+    force_init: true
+    complex_vars: true
+    #    state_file: "{{ workdir }}/terraform.tfstate"
+    workspace: "{{ service_name }}"
+    variables:
+      proxmox_host: "{{ proxmox_host }}"
+      proxmox_user: "{{ proxmox_user }}"
+      proxmox_password: "{{ proxmox_password }}"
+      proxmox_tls_insecure: "{{ proxmox_tls_insecure }}"
+      proxmox_datastore_id: "{{ proxmox_datastore_id }}"
+      vm_user: "{{ ansible_user }}"
+      vm_templates: "{{ vm.templates }}"
+      nodes: "{{ vm.target_nodes }}"
+      node_count: "{{ vm.count }}"
+      cpu: "{{ vm.cpu }}"
+      memory: "{{ vm.memory }}"
+      disk_size: "{{ vm.disk_size }}"
+      storage_pool: "{{ vm.storage_pool }}"
+      network_subnet: "{{ vm.network_subnet }}"
+      network_mask: "{{ vm.network_mask }}"
+      network_gateway: "{{ vm.network_gateway }}"
+      network_start_ip: "{{ vm.network_start_ip }}"
+      description: "{{ vm.description }}"
+      bridge: "{{ vm.bridge }}"
+      tag: "{{ vm.tag }}"
+      tags: "{{ vm.tags }}"
+      search_domain: "{{ vm.search_domain }}"
+      dns_server: "{{ vm.dns_server }}"
+      vm_user_ssh_key: "{{ vm.ssh_pub_key }}"
+      service_name: "{{ service_name }}"
+  register: tf_out 

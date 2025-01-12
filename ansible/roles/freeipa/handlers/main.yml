@@ -1,0 +1,3 @@
+- name: Restart named
+  ansible.builtin.reboot:
+    reboot_timeout: 3600

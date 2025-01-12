@@ -1,0 +1,17 @@
+- name: Deploy infrastructure
+  hosts: localhost
+  vars_files:
+    - inventory/vars/pihole.yaml
+  tasks:
+    - name: Deploy nodes on proxmox
+      ansible.builtin.include_role:
+        name: proxmox_nodes
+      vars:
+        state: present
+
+    - meta: refresh_inventory
+
+    - name: Wait for hosts to boot up
+      ansible.builtin.pause:
+        seconds: 30
+
