@@ -1,12 +1,21 @@
-
-- name: Deploy freeipa nodes on proxmox
+- name: Deploy nodes on proxmox
   community.general.terraform: 
     project_path: "{{ role_path }}/files/terraform"
-    state: present
+    state: "{{ state }}"
     force_init: true
     complex_vars: true
-    #    state_file: "{{ workdir }}/terraform.tfstate"
-    workspace: "{{ service_name }}"
+    backend_config:
+      bucket: "{{ s3.bucket }}"
+      key: "{{ service_name }}"
+      access_key: "{{ s3.access_key }}"
+      secret_key: "{{ s3.secret_key }}"
+      region: 'auto'
+      skip_credentials_validation: 'true'
+      skip_region_validation: 'true'
+      skip_requesting_account_id: 'true'
+      skip_metadata_api_check: 'true'
+      skip_s3_checksum: 'true'
+    workspace: "tfstate"
     variables:
       proxmox_host: "{{ proxmox_host }}"
       proxmox_user: "{{ proxmox_user }}"
@@ -33,6 +42,9 @@
       dns_server: "{{ vm.dns_server }}"
       vm_user_ssh_key: "{{ vm.ssh_pub_key }}"
       service_name: "{{ service_name }}"
-  register: tf_out 
+  register: tf_out_out
+  environment:
+    TF_DATA_DIR: "{{ workdir }}/tf/data/"
+    AWS_ENDPOINT_URL_S3:  "{{ s3.endpoint_url }}"
 
 - meta: refresh_inventory

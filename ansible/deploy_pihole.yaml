@@ -1,4 +1,4 @@
-- name: Deploy infrastructure
+- name: Deploy Pihole infrastructure
   hosts: localhost
   vars_files:
     - inventory/vars/pihole.yaml

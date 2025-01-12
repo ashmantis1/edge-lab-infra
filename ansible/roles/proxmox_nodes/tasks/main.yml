@@ -3,11 +3,6 @@
 
 - ansible.builtin.include_tasks: init_workdir.yaml
 
-- name: Destroy Infrastructure
-  ansible.builtin.include_tasks: destroy_infra.yaml
-  when: state == "absent"
-
 - name: Create Infrastructure
   ansible.builtin.include_tasks: run_terraform.yaml
-  when: state == "present"
 
