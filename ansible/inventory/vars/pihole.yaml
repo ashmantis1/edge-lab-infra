@@ -1,4 +1,5 @@
 # Ansible details
+timezone: "Australia/Melbourne"
 ansible_user: svc-ansible-infra
 ansible_ssh_pass: !vault |
           $ANSIBLE_VAULT;1.1;AES256
@@ -8,6 +9,7 @@ ansible_ssh_pass: !vault |
           6563303435396561330a633433313761333562356532323262343831306564626230306330306435
           32373936656530613139623235646533316464613831323963373330376139373864
 ansible_become_pass: "{{ ansible_ssh_pass }}"
+ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
 
 #Node details
 #These are the nodes that the vm's will be deployed to, in sequential order, eg. master01 will be deployed to nodes[0]. Use proxmox node names
@@ -15,23 +17,161 @@ vm:
   target_nodes: ["vm01","vm02"] # List of nodes to deploy the masters to must match master count (max )
   templates: [9000,9001]
   count: 2
-  cpu: 4
-  memory: 4096
+  cpu: 2
+  memory: 2048
   disk_size: 30 # Disk size for root drive of VM in GB
   storage_pool: "local-lvm"
   bridge: "vmbr0"
   tag: 4000
-  tags: "ipa,infra"
+  tags: "ipajoined,infra"
   dns_server: 10.110.0.10
   search_domain: infra.ashman.world
   ssh_pub_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF6leLiXjd46rW2/bKTyFtEBXv8A47Ti0kd49CcexgLy asher@fedora
   network_gateway: "10.110.0.1"
   network_subnet: "10.110.0.0"
   network_mask: "24"
-  network_start_ip: "90"
+  network_start_ip: "80"
   description: "Pihole hosts deployed by terraform"
 
 #Hostname details
 service_name: pihole
 dns_zone: infra.ashman.world
 
+## Pi-hole HA (keepalived) Settings
+pihole_vip_ipv4: "10.110.0.100/24" # Floating (virtual) IPv4 for the failover between Pi-hole nodes. You should use it as a target in your DNS settings.
+pihole_keepalived_pass: test
+enable_ipv6_support: false
+pihole_vip_ipv6: "fe80::53/64" # Floating (virtual) IPv6 for the failover between Pi-hole nodes. You should use it as a target in your DNS settings.
+
+## Gravity Sync Settings
+## https://github.com/vmstan/gravity-sync
+enable_gravity_sync: true
+gravity_sync_frequency: "hour" # https://github.com/vmstan/gravity-sync/wiki/Automation#speed-settings
+
+## Pi-hole as a recursive DNS server
+## https://docs.pi-hole.net/guides/dns/unbound/
+enable_unbound: false
+unbound_verbosity: 0 # https://docs.pi-hole.net/guides/dns/unbound/#add-logging-to-unbound
+
+## Pi-hole initial configuration setupVars.conf
+pihole_version: 5.18.4 # https://github.com/pi-hole/pi-hole/releases
+pihole_install_web_interface: "true"
+pihole_install_web_server: "true"
+pihole_lighthttpd_enabled: "true"
+pihole_privacy_level: "0" # https://docs.pi-hole.net/ftldns/privacylevels/
+pihole_interface: "eth0"
+pihole_query_logging: "false"
+pihole_dnsmasq_listening: "all" # local/all
+pihole_dns_1: "1.1.1.1" # This setting will be ignored when enable_unbound is set to true
+pihole_dns_2: "8.8.8.8" # This setting will be ignored when enable_unbound is set to true
+pihole_fqdn_required: "true"
+pihole_bogus_priv: "true"
+pihole_dns_cache_size: "10000" # https://docs.pi-hole.net/ftldns/dns-cache/
+pihole_dnssec_enabled: "false" # Enable DNSSEC support
+pihole_rev_server: "false" # Enable DNS conditional forwarding for device name resolution
+pihole_rev_server_domain: "homelab.local" # If conditional forwarding is enabled, set the domain of the local network router
+pihole_rev_server_target: "10.0.20.1" # If conditional forwarding is enabled, set the IP of the local network router
+pihole_rev_server_cidr: "10.0.20.0/24" # If conditional forwarding is enabled, set the reverse DNS zone (e.g. 192.168.0.0/24)
+
+## Pi-hole general configuration pihole-FTL.conf
+## https://docs.pi-hole.net/ftldns/configfile/
+pihole_webpassword: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          35386237346466653165636433663330313839636332333039393332363534303230343638376166
+          3237663831383233363864306562333537363365323138650a653361346162333832656236646438
+          30653730333737333538373565336561666631626666343137386365366565336436636533343734
+          3233653465396665380a623835616138373836646363383539613735393732316632343965326233
+          32626234316431613537653932626261333061343934396666623861356635663634
+pihole_rate_limit: "1000/60" # https://docs.pi-hole.net/ftldns/configfile/#rate_limit
+pihole_reply_when_busy: "DROP" # https://docs.pi-hole.net/ftldns/configfile/#reply_when_busy
+pihole_block_icloud_pr: "true" # https://docs.pi-hole.net/ftldns/configfile/#icloud_private_relay
+pihole_socket_listening: "all" # https://docs.pi-hole.net/ftldns/configfile/#socket_listening
+pihole_ptr: "HOSTNAMEFQDN" # https://docs.pi-hole.net/ftldns/configfile/#pihole_ptr
+
+pihole_adlists:
+  - name: KADhosts
+    url: https://raw.githubusercontent.com/PolishFiltersTeam/KADhosts/master/KADhosts.txt
+  - name: FadeMind Spam Hosts
+    url: https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Spam/hosts
+  - name: Firebog w3kbl
+    url: https://v.firebog.net/hosts/static/w3kbl.txt
+  - name: Matomo Referrer Spam Blacklist
+    url: https://raw.githubusercontent.com/matomo-org/referrer-spam-blacklist/master/spammers.txt
+  - name: SomeoneWhoCares Zero Hosts
+    url: https://someonewhocares.org/hosts/zero/hosts
+  - name: VeleSila Hosts
+    url: https://raw.githubusercontent.com/VeleSila/yhosts/master/hosts
+  - name: MVPS Hosts
+    url: https://winhelp2002.mvps.org/hosts.txt
+  - name: Firebog NeoHosts Basic
+    url: https://v.firebog.net/hosts/neohostsbasic.txt
+  - name: RooneyMcNibNug SNAFU
+    url: https://raw.githubusercontent.com/RooneyMcNibNug/pihole-stuff/master/SNAFU.txt
+  - name: BarbBlock Hosts
+    url: https://paulgb.github.io/BarbBlock/blacklists/hosts-file.txt
+  - name: AdAway Hosts
+    url: https://adaway.org/hosts.txt
+  - name: Firebog AdguardDNS
+    url: https://v.firebog.net/hosts/AdguardDNS.txt
+  - name: Firebog Admiral
+    url: https://v.firebog.net/hosts/Admiral.txt
+  - name: AnudeepND Blacklist
+    url: https://raw.githubusercontent.com/anudeepND/blacklist/master/adservers.txt
+  - name: Firebog Easylist
+    url: https://v.firebog.net/hosts/Easylist.txt
+  - name: PGL YoYo Adservers
+    url: https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&showintro=0&mimetype=plaintext
+  - name: FadeMind Unchecky Ads
+    url: https://raw.githubusercontent.com/FadeMind/hosts.extras/master/UncheckyAds/hosts
+  - name: BigDargon HostsVN
+    url: https://raw.githubusercontent.com/bigdargon/hostsVN/master/hosts
+  - name: Firebog EasyPrivacy
+    url: https://v.firebog.net/hosts/Easyprivacy.txt
+  - name: Firebog Prigent-Ads
+    url: https://v.firebog.net/hosts/Prigent-Ads.txt
+  - name: FadeMind 2o7Net
+    url: https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.2o7Net/hosts
+  - name: WindowsSpyBlocker Spy Hosts
+    url: https://raw.githubusercontent.com/crazy-max/WindowsSpyBlocker/master/data/hosts/spy.txt
+  - name: FrogEye Firstparty Trackers
+    url: https://hostfiles.frogeye.fr/firstparty-trackers-hosts.txt
+  - name: DeveloperDan Extended Ads and Tracking
+    url: https://www.github.developerdan.com/hosts/lists/ads-and-tracking-extended.txt
+  - name: Perflyst Android Tracking
+    url: https://raw.githubusercontent.com/Perflyst/PiHoleBlocklist/master/android-tracking.txt
+  - name: Perflyst SmartTV
+    url: https://raw.githubusercontent.com/Perflyst/PiHoleBlocklist/master/SmartTV.txt
+  - name: Perflyst Amazon FireTV
+    url: https://raw.githubusercontent.com/Perflyst/PiHoleBlocklist/master/AmazonFireTV.txt
+  - name: QuidsUp NoTrack Blocklist
+    url: https://gitlab.com/quidsup/notrack-blocklists/raw/master/notrack-blocklist.txt
+  - name: DandelionSprout Anti-Malware Hosts
+    url: https://raw.githubusercontent.com/DandelionSprout/adfilt/master/Alternate%20versions%20Anti-Malware%20List/AntiMalwareHosts.txt
+  - name: Firebog Prigent-Crypto
+    url: https://v.firebog.net/hosts/Prigent-Crypto.txt
+  - name: FadeMind Risk Hosts
+    url: https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Risk/hosts
+  - name: BitBucket Mandiant APT1
+    url: https://bitbucket.org/ethanr/dns-blacklists/raw/8575c9f96e5b4a1308f2f12394abd86d0927a4a0/bad_lists/Mandiant_APT1_Report_Appendix_D.txt
+  - name: Phishing Army Extended
+    url: https://phishing.army/download/phishing_army_blocklist_extended.txt
+  - name: QuidsUp NoTrack Malware
+    url: https://gitlab.com/quidsup/notrack-blocklists/raw/master/notrack-malware.txt
+  - name: Firebog RPiList Malware
+    url: https://v.firebog.net/hosts/RPiList-Malware.txt
+  - name: Firebog RPiList Phishing
+    url: https://v.firebog.net/hosts/RPiList-Phishing.txt
+  - name: Spam404 Main Blacklist
+    url: https://raw.githubusercontent.com/Spam404/lists/master/main-blacklist.txt
+  - name: AssoEchap Stalkerware
+    url: https://raw.githubusercontent.com/AssoEchap/stalkerware-indicators/master/generated/hosts
+  - name: URLHaus
+    url: https://urlhaus.abuse.ch/downloads/hostfile/
+  - name: CyberHost Malware
+    url: https://lists.cyberhost.uk/malware.txt
+  - name: Malware Filter Phishing
+    url: https://malware-filter.gitlab.io/malware-filter/phishing-filter-hosts.txt
+  - name: Firebog Prigent-Malware
+    url: https://v.firebog.net/hosts/Prigent-Malware.txt
+  - name: JarellLlama Scam Blocklist
+    url: https://raw.githubusercontent.com/jarelllama/Scam-Blocklist/main/lists/wildcard_domains/scams.txt

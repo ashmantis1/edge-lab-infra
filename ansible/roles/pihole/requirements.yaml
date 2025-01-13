@@ -1,5 +1,0 @@
-collections:
-  - name: freeipa.ansible_freeipa
-  - name: ansible.posix
-  - name: ansible.utils
-  

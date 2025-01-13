@@ -1,0 +1,13 @@
+- name: Install sqlite
+  ansible.builtin.package:
+    name:
+      - sqlite3
+    state: present
+
+- name: Add all adlists to database
+  ansible.builtin.command: "sqlite3 /etc/pihole/gravity.db \"INSERT INTO adlist (address, enabled, comment) VALUES ('{{ item.url }}', 1, '{{ item.name }}');\""
+  register: out
+  changed_when: out.rc == 0
+  failed_when: out.rc != 0 and out.rc != 19
+  loop: "{{ pihole_adlists }}"
+  notify: Update gravity

@@ -27,6 +27,15 @@
     users: "{{ ipa_service_accounts }}"
     ipaadmin_password: "{{ ipaadmin_password }}"
 
+- name: Create IPA permissions
+  freeipa.ansible_freeipa.ipapermission:
+    name: "{{ item.name }}"
+    object_type: "{{ item.object_type }}"
+    right: "{{ item.right }}"
+    attrs: "{{ item.attrs }}"
+    ipaadmin_password: "{{ ipaadmin_password }}"
+  loop: "{{ ipa_permissions }}"
+
 - name: Create IPA privileges
   freeipa.ansible_freeipa.ipaprivilege:
     name: "{{ item.name }}"

@@ -11,7 +11,17 @@
 
     - meta: refresh_inventory
 
-    - name: Wait for hosts to boot up
-      ansible.builtin.pause:
-        seconds: 30
+    - name: Wait for each host to be joined in IPA
+      ansible.builtin.include_role:
+        name: wait_host_joined
+      vars:
+        joined_hosts: "{{ groups['pihole_cluster'] | list }}" 
 
+- name: Deploy Pihole
+  hosts: pihole_cluster
+  become: true
+  gather_facts: true
+  vars_files:
+    - inventory/vars/pihole.yaml
+  roles:
+    - pihole

@@ -1,0 +1,11 @@
+- name: Reload sysctl config
+  ansible.builtin.command: sysctl -p
+  changed_when: false
+
+- name: Restart keepalived service
+  ansible.builtin.service:
+    name: keepalived
+    state: restarted
+
+- name: Update gravity
+  ansible.builtin.command: pihole -g

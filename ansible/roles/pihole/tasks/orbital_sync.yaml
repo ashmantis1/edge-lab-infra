@@ -1,0 +1,42 @@
+- name: Install dependencies
+  ansible.builtin.package:
+    name:
+      - podman
+    state: present
+
+- name: Create orbital sync directory
+  ansible.builtin.file:
+    path: "{{ orbital_sync.dir }}"
+    state: directory
+
+- name: Template orbital sync env file
+  ansible.builtin.template:
+    src: orbital_sync.env.j2
+    dest: "{{ orbital_sync.dir }}/orbital_sync.env"
+
+- name: Create orbital sync container
+  containers.podman.podman_container:
+    name: orbital_sync
+    image: "{{ orbital_sync.image }}:{{ orbital_sync.tag }}"
+    state: quadlet
+    env_file: "{{ orbital_sync.dir }}/orbital_sync.env"
+    quadlet_filename: orbital-sync
+    quadlet_file_mode: '0640'
+    quadlet_options:
+      - "AutoUpdate=registry"
+      - "Pull=newer"
+      - |
+        [Install]
+        WantedBy=default.target
+
+- name: Enable orbital sync service
+  ansible.builtin.systemd_service:
+    name: orbital-sync
+    state: started
+    enabled: true
+    daemon_reload: true
+
+- name: Restart orbital sync service
+  ansible.builtin.systemd_service:
+    name: orbital-sync
+    state: restarted

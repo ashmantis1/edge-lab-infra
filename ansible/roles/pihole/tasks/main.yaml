@@ -1,0 +1,25 @@
+- name: Update host
+  ansible.builtin.include_tasks: update.yaml
+
+- name: Initial host setup
+  ansible.builtin.include_tasks: setup_hosts.yaml
+
+- name: Configure Firewalld
+  ansible.builtin.include_tasks: firewalld.yaml
+
+- name: Configure Keepalived
+  ansible.builtin.include_tasks: keepalived.yaml
+
+- name: Configure Pihole
+  ansible.builtin.include_tasks: pihole.yaml
+
+- name: Update adlists
+  ansible.builtin.include_tasks: adlist.yaml
+
+- name: Configure Orbital Sync
+  ansible.builtin.include_tasks: orbital_sync.yaml
+  when: inventory_hostname in groups['master']
+
+- name: Finalise setup and output
+  ansible.builtin.include_tasks: final.yaml
+

@@ -1,0 +1,11 @@
+---
+# tasks file for wait_host_joined
+
+
+- name: Wait for each host to be joined in IPA
+  ansible.builtin.command: ipa host-show "{{ item }}"
+  register: host_show_out
+  retries: 120
+  delay: 5
+  until: host_show_out | regex_search('joincomplete') == 'joincomplete' 
+  loop: "{{ joined_hosts }}"

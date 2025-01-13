@@ -14,9 +14,9 @@ vm:
   storage_pool: "local-lvm"
   bridge: "vmbr0"
   tag: 4000
-  tags: "noipa"
+  tags: "infra"
   dns_server: 1.1.1.1
-  search_domain: infra.ashman.world
+  search_domain: infra.ashman.world # Not currently being used because proxmox is broken
   ssh_pub_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF6leLiXjd46rW2/bKTyFtEBXv8A47Ti0kd49CcexgLy asher@fedora
   network_gateway: "10.110.0.1"
   network_subnet: "10.110.0.0"
@@ -111,6 +111,11 @@ ipa_dns:
       record_type: A
       record_value:
         - 10.110.0.20
+    - zone_name: infra.ashman.world
+      name: pihole
+      record_type: A
+      record_value:
+        - 10.110.0.100
           
 
 ipa_service_accounts:
@@ -139,9 +144,17 @@ ipa_service_accounts:
           6563303435396561330a633433313761333562356532323262343831306564626230306330306435
           32373936656530613139623235646533316464613831323963373330376139373864
 
+ipa_permissions:
+  - name: "Modify Host - Description"
+    object_type: host
+    right: write
+    attrs:
+      - description
+
 ipa_privileges:
   - name: "Host Enrollment"
     permission:
+    - "Modify Host - Description"
     - "System: Add Hosts"
     - "System: Add krbPrincipalName to a Host"
     - "System: Enroll a Host"

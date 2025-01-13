@@ -56,7 +56,6 @@ resource "proxmox_vm_qemu" "nodes" {
   }
 
   nameserver = var.dns_server
-  searchdomain = var.search_domain
   #clone = "fedora41"
   # Cursed but hopefully works
   clone_id = var.vm_templates[count.index]
