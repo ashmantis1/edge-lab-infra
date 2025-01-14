@@ -116,6 +116,11 @@ ipa_dns:
       record_type: A
       record_value:
         - 10.110.0.100
+    - zone_name: infra.ashman.world
+      name: router
+      record_type: A
+      record_value:
+        - 10.110.0.1
           
 
 ipa_service_accounts:

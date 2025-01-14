@@ -43,35 +43,26 @@ pihole_keepalived_pass: test
 enable_ipv6_support: false
 pihole_vip_ipv6: "fe80::53/64" # Floating (virtual) IPv6 for the failover between Pi-hole nodes. You should use it as a target in your DNS settings.
 
-## Gravity Sync Settings
-## https://github.com/vmstan/gravity-sync
-enable_gravity_sync: true
-gravity_sync_frequency: "hour" # https://github.com/vmstan/gravity-sync/wiki/Automation#speed-settings
-
-## Pi-hole as a recursive DNS server
-## https://docs.pi-hole.net/guides/dns/unbound/
-enable_unbound: false
-unbound_verbosity: 0 # https://docs.pi-hole.net/guides/dns/unbound/#add-logging-to-unbound
-
 ## Pi-hole initial configuration setupVars.conf
 pihole_version: 5.18.4 # https://github.com/pi-hole/pi-hole/releases
-pihole_install_web_interface: "true"
-pihole_install_web_server: "true"
-pihole_lighthttpd_enabled: "true"
-pihole_privacy_level: "0" # https://docs.pi-hole.net/ftldns/privacylevels/
+pihole_privacy_level: "3" # https://docs.pi-hole.net/ftldns/privacylevels/
 pihole_interface: "eth0"
+pihole_dns_server: "{{ vm.dns_server }}" 
 pihole_query_logging: "false"
 pihole_dnsmasq_listening: "all" # local/all
-pihole_dns_1: "1.1.1.1" # This setting will be ignored when enable_unbound is set to true
-pihole_dns_2: "8.8.8.8" # This setting will be ignored when enable_unbound is set to true
 pihole_fqdn_required: "true"
 pihole_bogus_priv: "true"
 pihole_dns_cache_size: "10000" # https://docs.pi-hole.net/ftldns/dns-cache/
 pihole_dnssec_enabled: "false" # Enable DNSSEC support
-pihole_rev_server: "false" # Enable DNS conditional forwarding for device name resolution
-pihole_rev_server_domain: "homelab.local" # If conditional forwarding is enabled, set the domain of the local network router
-pihole_rev_server_target: "10.0.20.1" # If conditional forwarding is enabled, set the IP of the local network router
-pihole_rev_server_cidr: "10.0.20.0/24" # If conditional forwarding is enabled, set the reverse DNS zone (e.g. 192.168.0.0/24)
+pihole_split_dns:
+  - domain: ashman.world
+    dns_server: 10.110.0.10
+  - domain: ashman.world
+    dns_server: 10.110.0.11
+pihole_reply_when_busy: "DROP" # https://docs.pi-hole.net/ftldns/configfile/#reply_when_busy
+pihole_block_icloud_pr: "true" # https://docs.pi-hole.net/ftldns/configfile/#icloud_private_relay
+pihole_socket_listening: "all" # https://docs.pi-hole.net/ftldns/configfile/#socket_listening
+pihole_ptr: "HOSTNAMEFQDN" # https://docs.pi-hole.net/ftldns/configfile/#pihole_ptr
 pihole_ssl:
   enabled: false
   key_path: /opt/pihole/ssl-combined.pem
@@ -84,11 +75,6 @@ pihole_webpassword: !vault |
           30653730333737333538373565336561666631626666343137386365366565336436636533343734
           3233653465396665380a623835616138373836646363383539613735393732316632343965326233
           32626234316431613537653932626261333061343934396666623861356635663634
-pihole_rate_limit: "1000/60" # https://docs.pi-hole.net/ftldns/configfile/#rate_limit
-pihole_reply_when_busy: "DROP" # https://docs.pi-hole.net/ftldns/configfile/#reply_when_busy
-pihole_block_icloud_pr: "true" # https://docs.pi-hole.net/ftldns/configfile/#icloud_private_relay
-pihole_socket_listening: "all" # https://docs.pi-hole.net/ftldns/configfile/#socket_listening
-pihole_ptr: "HOSTNAMEFQDN" # https://docs.pi-hole.net/ftldns/configfile/#pihole_ptr
 
 pihole_adlists:
   - name: KADhosts

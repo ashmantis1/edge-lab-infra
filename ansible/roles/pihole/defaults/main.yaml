@@ -1,4 +1,0 @@
-orbital_sync:
-  image: docker.io/mattwebbio/orbital-sync
-  tag: latest
-  dir: /opt/orbital_sync

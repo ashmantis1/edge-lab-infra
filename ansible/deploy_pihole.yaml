@@ -24,6 +24,5 @@
   vars_files:
     - inventory/vars/pihole.yaml
   roles:
-    - /home/asher/Development/ansible/roles/pihole-ansible-role
-
-    #    - pihole-ansible-role
+    - pihole-ansible-role
+    # /home/asher/Development/ansible/roles/pihole-ansible-role

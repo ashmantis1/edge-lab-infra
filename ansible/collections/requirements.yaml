@@ -8,6 +8,6 @@ collections:
 roles:
   - src: git@github.com:eddster2309/pihole-ansible-role.git
     scm: git
-    version: "ssl-support"
+    version: "main"
 
   
