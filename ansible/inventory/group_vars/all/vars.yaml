@@ -1,0 +1,20 @@
+ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+#Proxmox details
+proxmox_host: "vm01.infra.ashman.world:8006/api2/json"
+proxmox_user: "root@pam!ansible"
+proxmox_tls_insecure: true
+proxmox_password: "{{ vault_proxmox_password }}"
+proxmox_datastore_id: "local-lvm"
+# S3 Details
+s3: "{{ vault_s3 }}"
+# bucket:
+# access_key:
+# endpoint_url:
+# secret_key:
+ansible_ssh_pass: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          66636338393934393535336563373336383363633764313335306535333863613039383435336234
+          3563663538643531323633373639653134356263666331320a306332646462376232373935336464
+          30663039633764313332373461653062663562353633613938613761356465343732653265666330
+          6531396136376565380a373762343038323862653531626666653638306530313530653030353239
+          30383734633031636230613732623961646139333738363865613964376335376338

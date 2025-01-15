@@ -1,14 +1,8 @@
 # Ansible details
 timezone: "Australia/Melbourne"
 ansible_user: svc-ansible-infra
-ansible_ssh_pass: !vault |
-          $ANSIBLE_VAULT;1.1;AES256
-          36333164333964313338343636363565616365626234623533393130333637393233333636636438
-          6436613861353734306635383634303733323735623034650a343063656265643338643964616332
-          32666136616130646233626135366165376466353464326363663161616637356465666461613264
-          6563303435396561330a633433313761333562356532323262343831306564626230306330306435
-          32373936656530613139623235646533316464613831323963373330376139373864
-ansible_become_pass: "{{ ansible_ssh_pass }}"
+ansible_ssh_pass: "{{ vault_ipa_service_accounts.svc_ansible_infra.password }}"
+ansible_become_pass: "{{ vault_ipa_service_accounts.svc_ansible_infra.password }}"
 ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
 
 #Node details
@@ -39,7 +33,7 @@ dns_zone: infra.ashman.world
 
 ## Pi-hole HA (keepalived) Settings
 pihole_vip_ipv4: "10.110.0.100/24" # Floating (virtual) IPv4 for the failover between Pi-hole nodes. You should use it as a target in your DNS settings.
-pihole_keepalived_pass: test
+pihole_keepalived_pass: "{{ vault_pihole_keepalived_pass }}"
 enable_ipv6_support: false
 pihole_vip_ipv6: "fe80::53/64" # Floating (virtual) IPv6 for the failover between Pi-hole nodes. You should use it as a target in your DNS settings.
 
@@ -68,13 +62,7 @@ pihole_ssl:
   key_path: /opt/pihole/ssl-combined.pem
 ## Pi-hole general configuration pihole-FTL.conf
 ## https://docs.pi-hole.net/ftldns/configfile/
-pihole_webpassword: !vault |
-          $ANSIBLE_VAULT;1.1;AES256
-          35386237346466653165636433663330313839636332333039393332363534303230343638376166
-          3237663831383233363864306562333537363365323138650a653361346162333832656236646438
-          30653730333737333538373565336561666631626666343137386365366565336436636533343734
-          3233653465396665380a623835616138373836646363383539613735393732316632343965326233
-          32626234316431613537653932626261333061343934396666623861356635663634
+pihole_webpassword: "{{ vault_pihole_webpassword }}"
 
 pihole_adlists:
   - name: KADhosts
