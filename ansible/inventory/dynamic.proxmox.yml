@@ -22,6 +22,10 @@ groups:
   pihole_cluster: "'pihole' in (proxmox_tags_parsed|list)"
   master: "'piholeprimary' in (proxmox_tags_parsed|list)"
   backup: "'piholesecondary' in (proxmox_tags_parsed|list)"
+  # K8S
+  k8s_cluster: "'kube-infra' in (proxmox_tags_parsed|list)"
+  k8s_masters: "'kube-infraprimary' in (proxmox_tags_parsed|list)"
+  k8s_workers: "'kube-infrasecondary' in (proxmox_tags_parsed|list)"
 compose:
   ansible_host: proxmox_agent_interfaces[1]["ip-addresses"][0].split('/')[0]
   ansible_ssh_user: asher

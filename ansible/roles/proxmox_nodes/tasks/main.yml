@@ -1,7 +1,13 @@
 ---
 # tasks file for proxmox_nodes
 
-- ansible.builtin.include_tasks: init_workdir.yaml
+- name: Initialise templates variable
+  ansible.builtin.set_fact:
+    proxmox_nodes_templates: "{{ (proxmox_nodes_templates | default([])) + [node_templates[item][vm.template]] }}"
+  loop: "{{ vm.target_nodes }}"
+
+- name: Initialise working directory
+  ansible.builtin.include_tasks: init_workdir.yaml
 
 - name: Create Infrastructure
   ansible.builtin.include_tasks: run_terraform.yaml

@@ -15,6 +15,9 @@
   ansible.builtin.include_tasks: configure_ipa_global_config.yaml
   run_once: true
   tags: ipa, configure, global
+- name: Enable extra features
+  ansible.builtin.include_tasks: enable_ipa_extra_features.yaml
+  tags: ipa, configure, acme
 - name: Final config
   ansible.builtin.include_tasks: configure_all_hosts.yaml 
   tags: ipa, configure, final

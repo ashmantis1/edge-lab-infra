@@ -1,0 +1,60 @@
+- name: Deploy Pihole infrastructure
+  hosts: localhost
+  vars_files:
+    - inventory/vars/k8s.yaml
+  tasks:
+    - name: Deploy nodes on proxmox
+      ansible.builtin.include_role:
+        name: proxmox_nodes
+      vars:
+        state: present
+
+    - meta: refresh_inventory
+
+    - name: Wait for each host to be joined in IPA
+      ansible.builtin.include_role:
+        name: wait_host_joined
+      vars:
+        joined_hosts: "{{ groups['k8s_cluster'] | list }}" 
+
+- name: Deploy K8S (RKE2)
+  hosts: k8s_cluster
+  become: true
+  gather_facts: true
+  vars_files:
+    - inventory/vars/k8s.yaml
+  roles:
+  tasks:
+    - name: Disable firewalld
+      ansible.builtin.systemd_service:
+        name: firewalld
+        enabled: false
+        state: stopped
+        masked: true
+    #- name: Allow relevant ports
+    #  ansible.posix.firewalld:
+    #    port: "{{ item }}"
+    #    permanent: true
+    #    immediate: true
+    #    #zone: trusted
+    #    state: enabled
+    #  loop:
+    #    - 6443/tcp
+    #    - 9345/tcp
+    #    - 10250/tcp
+    #    - 2379/tcp
+    #    - 2380/tcp
+    #    - 2381/tcp
+    #    - 30000-32767/tcp
+    #    # Cilium
+    #    - 4240/tcp
+    #    - 8372/udp
+    #    #- 51871/udp 
+    #    # Calico
+    #    #- 9098/tcp
+    #    #- 9099/tcp
+    #    #- 5473/tcp
+    - name: Deploy RKE2
+      ansible.builtin.include_role:
+        name: lablabs.rke2
+

@@ -9,8 +9,9 @@ ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
 #These are the nodes that the vm's will be deployed to, in sequential order, eg. master01 will be deployed to nodes[0]. Use proxmox node names
 vm:
   target_nodes: ["vm01","vm02"] # List of nodes to deploy the masters to must match master count (max )
-  templates: [9000,9001]
+  template: fedora41
   count: 2
+  primary_count: 1
   cpu: 2
   memory: 2048
   disk_size: 30 # Disk size for root drive of VM in GB
@@ -18,13 +19,13 @@ vm:
   bridge: "vmbr0"
   tag: 4000
   tags: "ipajoined,infra"
-  dns_server: 10.110.0.10
+  dns_server: "10.110.0.10 10.110.0.11"
   search_domain: infra.ashman.world
   ssh_pub_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF6leLiXjd46rW2/bKTyFtEBXv8A47Ti0kd49CcexgLy asher@fedora
-  network_gateway: "10.110.0.1"
-  network_subnet: "10.110.0.0"
-  network_mask: "24"
-  network_start_ip: "80"
+  network_gateway: "{{ network.infra.gateway }}"
+  network_subnet: "{{ network.infra.subnet }}"
+  network_mask: "{{ network.infra.mask }}"
+  network_start_ip: "{{ network.infra.start_ip.pihole }}"
   description: "Pihole hosts deployed by terraform"
 
 #Hostname details

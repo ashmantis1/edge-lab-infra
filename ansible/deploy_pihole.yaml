@@ -25,4 +25,3 @@
     - inventory/vars/pihole.yaml
   roles:
     - pihole-ansible-role
-    # /home/asher/Development/ansible/roles/pihole-ansible-role

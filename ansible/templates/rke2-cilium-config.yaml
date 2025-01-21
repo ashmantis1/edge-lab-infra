@@ -1,0 +1,36 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: rke2-cilium
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    kubeProxyReplacement: true
+    k8sServiceHost: {{ rke2_api_ip }}
+    k8sServicePort: {{ rke2_apiserver_dest_port }}
+    l2announcements:
+      enabled: true
+    cni:
+      exclusive: false
+    hostFirewall:
+      enabled: true
+    hubble:
+      enabled: true
+      ui:
+        enabled: true
+        ingress:
+          enabled: true
+          className: nginx
+          hosts:
+            - hubble.k8s.infra.ashman.world
+      relay:
+        enabled: true
+
+      
+#    image:
+#      tag: "v1.15.0"
+#    operator:
+#      image:
+#        tag: "v1.15.0"
+    
+

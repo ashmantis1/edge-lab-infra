@@ -19,7 +19,7 @@ resource "proxmox_vm_qemu" "nodes" {
   count = var.node_count
   name = "${var.service_name}${format("%02s", count.index+1)}"
   desc = "${ var.description }"
-  tags =  count.index == 0 ? "${ var.service_name },${var.service_name}primary,${ var.tags }" : "${ var.service_name },${ var.service_name}secondary,${ var.tags }"
+  tags =  count.index < var.primary_count ? "${ var.service_name },${var.service_name}primary,${ var.tags }" : "${ var.service_name },${ var.service_name}secondary,${ var.tags }"
   target_node = "${var.nodes[count.index]}"
 
   agent = 1

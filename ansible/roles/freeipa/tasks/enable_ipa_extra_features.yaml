@@ -1,0 +1,10 @@
+
+- name: acme
+  when: ipa_acme_enabled
+  block: 
+  - name: Enable ACME
+    ansible.builtin.shell: ipa-acme-manage enable
+
+  - name: Enable ACME pruning
+    ansible.builtin.shell: ipa-acme-manage pruning --enable --cron "0 0 1 * *"
+    when: ipaserver_random_serial_numbers

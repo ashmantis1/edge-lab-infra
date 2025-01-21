@@ -1,5 +1,10 @@
 // Proxmox details
 
+variable "primary_count" {
+    description = "Number of nodes to be marked as primary"
+    type = number
+}
+
 variable "proxmox_host" {
     description = "Proxmox host address (ip/domain:port) https will be appended"
     type = string 
