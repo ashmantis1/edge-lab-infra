@@ -22,6 +22,7 @@ ansible_ssh_pass: !vault |
 node_templates:
   vm01:
     fedora41: 9000
+    debian12: 9100
   vm02:
     fedora41: 9001
 
@@ -35,4 +36,5 @@ network:
       freeipa: 10
       pihole: 80
       k8s: 110
+      minio: 120
 

@@ -1,0 +1,4 @@
+#!/bin/bash
+growpart /dev/vda 3
+pvresize /dev/vda3
+lvresize -l+100%FREE --resizefs /dev/mapper/fedora-root

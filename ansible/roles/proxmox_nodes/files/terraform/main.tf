@@ -48,7 +48,7 @@ resource "proxmox_vm_qemu" "nodes" {
     virtio {
       virtio0 {
         disk {
-          size = "30G"
+          size = "${ var.disk_size }G"
           storage = "${ var.storage_pool }"
         }
       }

@@ -5,6 +5,7 @@ collections:
   - name: ansible.utils
   - name: community.crypto
   - name: containers.podman
+  - name: community.postgresql
 roles:
   - name: lablabs.rke2
   - src: git@github.com:eddster2309/pihole-ansible-role.git

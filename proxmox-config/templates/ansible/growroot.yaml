@@ -1,0 +1,30 @@
+- name: Install growroot service
+  hosts: all
+  become: true
+  vars: {}
+  #ansible_user: cloud-user
+  #ansible_ssh_private_key_file: ~/.ssh/id_ed25519
+  tasks: 
+    - name: Template file
+      ansible.builtin.template:
+        src: templates/growroot.service.j2
+        dest: /etc/systemd/system/growroot.service
+        owner: root
+        mode: 755
+        setype: systemd_unit_file_t
+    
+    - name: Template growroot script
+      ansible.builtin.template:
+        src: templates/growroot.sh.j2
+        dest: "{{ growroot_bin_location }}"
+        owner: root
+        mode: 755
+
+    - name: Daemon reload
+      ansible.builtin.systemd_service:
+        daemon_reload: true
+
+    - name: Enable unit
+      ansible.builtin.systemd_service:
+        enabled: true
+        name: growroot.service

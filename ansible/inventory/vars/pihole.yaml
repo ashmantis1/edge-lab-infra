@@ -54,6 +54,14 @@ pihole_split_dns:
     dns_server: 10.110.0.10
   - domain: ashman.world
     dns_server: 10.110.0.11
+  - domain: 0.110.10.in-addr.arpa
+    dns_server: 10.110.0.10
+  - domain: 0.110.10.in-addr.arpa
+    dns_server: 10.110.0.11
+  - domain: 140.10.in-addr.arpa
+    dns_server: 10.110.0.10
+  - domain: 140.10.in-addr.arpa
+    dns_server: 10.110.0.11
 pihole_reply_when_busy: "DROP" # https://docs.pi-hole.net/ftldns/configfile/#reply_when_busy
 pihole_block_icloud_pr: "true" # https://docs.pi-hole.net/ftldns/configfile/#icloud_private_relay
 pihole_socket_listening: "all" # https://docs.pi-hole.net/ftldns/configfile/#socket_listening

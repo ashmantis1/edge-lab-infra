@@ -13,19 +13,20 @@ spec:
     cni:
       exclusive: false
     hostFirewall:
-      enabled: true
-    hubble:
-      enabled: true
-      ui:
-        enabled: true
-        ingress:
-          enabled: true
-          className: nginx
-          hosts:
-            - hubble.k8s.infra.ashman.world
-      relay:
-        enabled: true
+      enabled: false
 
+#    hubble:
+#      enabled: false
+#      ui:
+#        enabled: true
+#        ingress:
+#          enabled: true
+#          className: nginx
+#          hosts:
+#            - hubble.k8s.infra.ashman.world
+#      relay:
+#        enabled: true
+#
       
 #    image:
 #      tag: "v1.15.0"

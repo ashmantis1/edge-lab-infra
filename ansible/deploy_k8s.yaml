@@ -17,6 +17,10 @@
       vars:
         joined_hosts: "{{ groups['k8s_cluster'] | list }}" 
 
+    - name: Short delay for final stages of join
+      ansible.builtin.pause:
+        seconds: 5
+
 - name: Deploy K8S (RKE2)
   hosts: k8s_cluster
   become: true
@@ -31,29 +35,29 @@
         enabled: false
         state: stopped
         masked: true
-    #- name: Allow relevant ports
-    #  ansible.posix.firewalld:
-    #    port: "{{ item }}"
-    #    permanent: true
-    #    immediate: true
-    #    #zone: trusted
-    #    state: enabled
-    #  loop:
-    #    - 6443/tcp
-    #    - 9345/tcp
-    #    - 10250/tcp
-    #    - 2379/tcp
-    #    - 2380/tcp
-    #    - 2381/tcp
-    #    - 30000-32767/tcp
-    #    # Cilium
-    #    - 4240/tcp
-    #    - 8372/udp
-    #    #- 51871/udp 
-    #    # Calico
-    #    #- 9098/tcp
-    #    #- 9099/tcp
-    #    #- 5473/tcp
+
+    - name: Install node requirements
+      ansible.builtin.package:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - iscsi-initiator-utils
+        - cryptsetup
+
+    - name: Start and enable services
+      ansible.builtin.systemd_service:
+        name: "{{ item }}"
+        enabled: true
+        state: started
+      loop:
+        - iscsid
+
+    - name: Enable dm_crypt kernel module
+      community.general.modprobe:
+        name: dm_crypt
+        state: present
+        persistent: present
+
     - name: Deploy RKE2
       ansible.builtin.include_role:
         name: lablabs.rke2

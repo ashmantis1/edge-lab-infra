@@ -1,0 +1,10 @@
+[Unit]
+Description=Grow root partition
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart="{{ growroot_bin_location }}"
+
+[Install]
+WantedBy=sysinit.target

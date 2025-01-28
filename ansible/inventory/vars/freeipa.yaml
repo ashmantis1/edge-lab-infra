@@ -111,6 +111,11 @@ ipa_dns:
       record_type: A
       record_value:
         - 10.110.0.1
+    - zone_name: k8s.ashman.world
+      name: api.infra
+      record_type: A
+      record_value:
+        - 10.110.0.150
           
 
 ipa_service_accounts:

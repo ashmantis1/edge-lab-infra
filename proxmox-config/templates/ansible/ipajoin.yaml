@@ -1,0 +1,37 @@
+- name: Create IPA Join Systemd unit
+  hosts: all
+  become: true
+  vars: {}
+  #ansible_user: cloud-user
+  #ansible_ssh_private_key_file: ~/.ssh/id_ed25519
+  tasks: 
+    - name: Template IPA Join service file
+      ansible.builtin.template:
+        src: templates/ipajoin.service.j2
+        dest: /etc/systemd/system/ipajoin.service
+        owner: root
+        mode: 755
+        setype: systemd_unit_file_t
+    
+    - name: Template IPA Join script
+      ansible.builtin.template:
+        src: templates/ipajoin.sh.j2
+        dest: "{{ ipajoin_bin_location }}"
+        owner: root
+        mode: 755
+
+    - name: Template IPA Join Cleanup script
+      ansible.builtin.template:
+        src: templates/cleanup.sh.j2
+        dest: "{{ ipajoin_cleanup_location }}"
+        owner: root
+        mode: 755
+
+    - name: Daemon reload
+      ansible.builtin.systemd_service:
+        daemon_reload: true
+
+    - name: Enable unit
+      ansible.builtin.systemd_service:
+        enabled: true
+        name: ipajoin.service

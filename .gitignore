@@ -43,3 +43,4 @@ user-data.yaml
 infrastructure/kubernetes/terraform/cloudinit/user-data.yaml
 
 *buffer/*
+*credentials.packer.hcl*

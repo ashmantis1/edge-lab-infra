@@ -1,0 +1,14 @@
+[Unit]
+Description=Join Host to IPA
+After=cloud-init.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStartPre=/bin/sh -c 'until host "{{ ipa_server }}"; do sleep 1; done'
+ExecStart="{{ ipajoin_bin_location }}"
+ExecStartPost="{{ ipajoin_cleanup_location }}"
+ExecStopPost="{{ ipajoin_cleanup_location }}"
+
+[Install]
+WantedBy=cloud-init.target

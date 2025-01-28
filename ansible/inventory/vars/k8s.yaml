@@ -14,7 +14,7 @@ vm:
   primary_count: 3
   cpu: 6
   memory: 4096
-  disk_size: 30 # Disk size for root drive of VM in GB
+  disk_size: 100 # Disk size for root drive of VM in GB
   storage_pool: "local-lvm"
   bridge: "vmbr0"
   tag: 4000
@@ -26,7 +26,7 @@ vm:
   network_subnet: "{{ network.infra.subnet }}"
   network_mask: "{{ network.infra.mask }}"
   network_start_ip: "{{ network.infra.start_ip.k8s }}"
-  description: "Pihole hosts deployed by terraform"
+  description: "Minio hosts deployed by terraform"
 
 #Hostname details
 service_name: kube-infra
@@ -44,8 +44,8 @@ rke2_version: v1.32.0+rke2r1
 #  range-global: 10.110.0.200-10.110.0.254
 rke2_custom_manifests:
   - templates/rke2-cilium-config.yaml
-  - templates/cilium-l2-policy.yaml
-  - templates/cilium-lb-pool.yaml
+  #  - templates/cilium-l2-policy.yaml
+  #  - templates/cilium-lb-pool.yaml
   #  - templates/cilium-host-access-policy.yaml
 rke2_cni:
   - multus
