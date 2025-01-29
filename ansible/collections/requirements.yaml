@@ -8,6 +8,7 @@ collections:
   - name: community.postgresql
 roles:
   - name: lablabs.rke2
+  - name: ricsanfre.minio
   - src: git@github.com:eddster2309/pihole-ansible-role.git
     scm: git
     version: "f4a39300eea600acf567ebae287472f2cb70e686"

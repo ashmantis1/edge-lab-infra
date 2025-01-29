@@ -1,0 +1,104 @@
+- name: Deploy Minio infrastructure
+  hosts: localhost
+  vars_files:
+    - inventory/vars/minio.yaml
+  tasks:
+    - name: Deploy nodes on proxmox
+      ansible.builtin.include_role:
+        name: proxmox_nodes
+      vars:
+        state: present
+
+    - meta: refresh_inventory
+
+    - name: Wait for each host to be joined in IPA
+      ansible.builtin.include_role:
+        name: wait_host_joined
+      vars:
+        joined_hosts: "{{ groups['minio'] | list }}" 
+
+    - name: Short delay for final stages of join
+      ansible.builtin.pause:
+        seconds: 5
+
+- name: Deploy Minio
+  hosts: minio
+  become: true
+  gather_facts: true
+  vars_files:
+    - inventory/vars/minio.yaml
+  tasks:
+    - name: Install required packages
+      ansible.builtin.package:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - nfs-utils
+
+    - name: Create NFS mount
+      ansible.posix.mount:
+        src: "{{ nfs_mount }}"
+        path: "{{ nfs_mount_path }}"
+        state: mounted
+        fstype: nfs
+
+    - name: Set firewalld rules
+      ansible.posix.firewalld:
+        port: "{{ item }}"
+        permanent: true
+        immediate: true
+        state: enabled
+      loop:
+        - 443/tcp
+        - 9092/tcp
+
+    - name: Create certificate directory
+      ansible.builtin.file:
+        path: "{{ certificate_dir }}"
+        state: directory
+
+    - name: Request IPA certificate for host
+      ansible.builtin.shell: ipa-getcert request -K HTTP/$(hostname) -k "{{ certificate_dir }}"/minio.key -f "{{ certificate_dir }}"/minio.pem -g 2048 -D $(hostname)
+      become: true
+      register: out
+      changed_when: out.rc == 0
+      failed_when: out.rc != 0 and out.rc != 2
+
+    - name: Pause for certificate
+      ansible.builtin.pause:
+        seconds: 5
+
+    - name: Set ceritifcate file permissions
+      ansible.builtin.file:
+        path: "{{ certificate_dir }}"
+        state: directory
+        recurse: true
+        mode: '0755'
+        owner: "{{ minio_user }}"
+        group: "{{ minio_group }}"
+
+    - name: Cat key
+      ansible.builtin.shell: cat "{{ certificate_dir }}/minio.key"
+      register: key_out
+
+    - name: Cat pem
+      ansible.builtin.shell: cat "{{ certificate_dir }}/minio.pem"
+      register: pem_out
+
+    - name: Set certificate variable
+      ansible.builtin.set_fact:
+        minio_key: "{{ key_out.stdout }}"
+        minio_cert: "{{ pem_out.stdout }}"
+
+    - name: Create minio directory
+      ansible.builtin.file:
+        path: "{{ minio_data_dir_path }}"
+        owner: "{{ minio_user }}"
+        group: "{{ minio_group }}"
+        state: directory
+        mode: '0775'
+
+    - name: Deploy Minio
+      ansible.builtin.include_role:
+        name: ricsanfre.minio
+

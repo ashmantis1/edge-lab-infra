@@ -1,0 +1,11 @@
+- name: Destroy Minio infrastructure
+  hosts: localhost
+  vars_files:
+    - inventory/vars/minio.yaml
+  tasks:
+    - name: Deploy nodes on proxmox
+      ansible.builtin.include_role:
+        name: proxmox_nodes
+      vars:
+        state: absent
+

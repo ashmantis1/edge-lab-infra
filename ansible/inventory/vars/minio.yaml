@@ -13,7 +13,7 @@ vm:
   primary_count: 1
   cpu: 2
   memory: 2048
-  disk_size: 100 # Disk size for root drive of VM in GB
+  disk_size: 30 # Disk size for root drive of VM in GB
   storage_pool: "local-lvm"
   bridge: "vmbr0"
   tag: 4000
@@ -27,12 +27,27 @@ vm:
   network_start_ip: "{{ network.infra.start_ip.minio }}"
   description: "Minio hosts deployed by terraform"
 
+# Certificate details
+certificate_dir: /opt/certs 
+
 #Hostname details
 service_name: minio
 dns_zone: infra.ashman.world
 
-#Minio Details
+# NFS details
+nfs_mount: storage.infra.ashman.world:/volume1/Infra/MinIO
+nfs_mount_path: /mnt/minio
 
+#Minio Details
+minio_data_dir_path: "{{ nfs_mount_path }}/backend"
+minio_user: minio
+minio_group: minio
 minio_install_server: true
 minio_root_user: admin
 minio_root_password: "{{ vault_minio.root_password }}"
+minio_server_make_datadirs: true
+minio_enable_tls: true
+minio_server_port: 443
+minio_url: "https://{{ service_name }}01.{{ dns_zone }}:{{ minio_server_port }}"
+minio_server_datadirs:
+  - "{{ minio_data_dir_path }}"
