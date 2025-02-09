@@ -1,0 +1,2 @@
+certificate_dir: "/opt/certs"
+cert_owner: user

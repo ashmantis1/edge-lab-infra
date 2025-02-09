@@ -6,6 +6,7 @@ collections:
   - name: community.crypto
   - name: containers.podman
   - name: community.postgresql
+  - name: community.hashi_vault
 roles:
   - name: lablabs.rke2
   - name: ricsanfre.minio

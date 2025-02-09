@@ -33,4 +33,29 @@ vm:
 service_name: vault
 dns_zone: infra.ashman.world
 
+certificate_dir: "/opt/certs"
+vault_address: "https://{{ service_name }}01.{{ dns_zone }}:8200"
+vault_svc_account:
+  name: svc-config-admin
+  password: "{{ vault_vault_svc_account_password }}"
+vault_ldap:
+  url: "ldaps://ipa01.infra.ashman.world"
+  userdn: "cn=users,cn=accounts,dc=infra,dc=ashman,dc=world"
+  groupdn: "cn=groups,cn=accounts,dc=infra,dc=ashman,dc=world"
+  groupattr: "cn"
+  userattr: "uid"
+  binddn: "uid=svc-vault-bind,cn=users,cn=accounts,dc=infra,dc=ashman,dc=world"
+  bindpass: "{{ vault_ipa_service_accounts.svc_vault_bind.password }}"
+  certificate: "@/etc/ipa/ca.crt"
+  starttls: true
+  policy_mappings:
+    - ldap_group: vault_admins
+      policy: admin
 vault_version: "1.18.4"
+vault_data_directory: /opt/vault
+vault_s3_access_key: "{{ vault_vault_s3.access_key }}"
+vault_s3_secret_key: "{{ vault_vault_s3.secret_key }}"
+vault_s3_bucket: vault
+vault_s3_region: eu-west-1
+vault_s3_endpoint: https://minio01.infra.ashman.world
+

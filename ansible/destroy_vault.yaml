@@ -1,0 +1,10 @@
+- name: Destroy vault infrastructure
+  hosts: localhost
+  vars_files:
+    - inventory/vars/vault.yaml
+  tasks:
+    - name: Destroy nodes on proxmox
+      ansible.builtin.include_role:
+        name: proxmox_nodes
+      vars:
+        state: absent

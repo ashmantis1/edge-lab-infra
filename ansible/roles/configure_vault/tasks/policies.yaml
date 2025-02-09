@@ -1,0 +1,29 @@
+- name: Configure policies
+  environment:
+    VAULT_ADDR: "{{ vault_address }}"
+    VAULT_TOKEN: "{{ vault_token }}"
+  block:
+    - name: Create vault policy directory
+      ansible.builtin.file:
+        path: /etc/vault.d/policies
+        state: directory
+      
+    - name: Create vault policies
+      ansible.builtin.copy:
+        src: "policy/"
+        dest: /etc/vault.d/policies/
+        mode: 0644
+        owner: vault
+        group: vault
+    
+    - name: Get policies
+      ansible.builtin.find:
+        paths: /etc/vault.d/policies
+        patterns: "*.hcl"
+        recurse: true
+        file_type: file
+      register: vault_policies
+
+    - name: Create policies
+      ansible.builtin.shell: "vault policy write {{ item.path | basename | regex_replace('.hcl', '') }} {{ item.path }}"
+      loop: "{{ vault_policies.files }}"

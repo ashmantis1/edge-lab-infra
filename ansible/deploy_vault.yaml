@@ -15,7 +15,7 @@
       ansible.builtin.include_role:
         name: wait_host_joined
       vars:
-        joined_hosts: "{{ groups['minio'] | list }}" 
+        joined_hosts: "{{ groups['vault'] | list }}" 
 
     - name: Short delay for final stages of join
       ansible.builtin.pause:
@@ -38,17 +38,8 @@
   gather_facts: true
   vars_files:
     - inventory/vars/vault.yaml
-  tasks:
-    - name: Create IP Tables forwarding rule 
-      ansible.builtin.iptables:
-      table: nat
-      chain: PREROUTING
-      protocol: tcp
-      match: tcp
-      destination_port: 443
-      jump: REDIRECT
-      to_ports: 8200
-
-    - name: Run Vault  
-      ansible.builtin.include_role:
-        name: robertdebock.vault
+  roles:
+    - role: robertdebock.vault
+    - role: request_ipa_certs
+      cert_owner: vault
+    - role: configure_vault

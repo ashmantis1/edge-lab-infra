@@ -62,37 +62,18 @@
         - 443/tcp
         - 9092/tcp
 
-    - name: Create certificate directory
-      ansible.builtin.file:
-        path: "{{ certificate_dir }}"
-        state: directory
-
-    - name: Request IPA certificate for host
-      ansible.builtin.shell: ipa-getcert request -K HTTP/$(hostname) -k "{{ certificate_dir }}"/minio.key -f "{{ certificate_dir }}"/minio.pem -g 2048 -D $(hostname)
-      become: true
-      register: out
-      changed_when: out.rc == 0
-      failed_when: out.rc != 0 and out.rc != 2
-
-    - name: Pause for certificate
-      ansible.builtin.pause:
-        seconds: 5
-
-    - name: Set ceritifcate file permissions
-      ansible.builtin.file:
-        path: "{{ certificate_dir }}"
-        state: directory
-        recurse: true
-        mode: '0755'
-        owner: "{{ minio_user }}"
-        group: "{{ minio_group }}"
+    - name: Request IPA certs
+      ansible.builtin.include_role:
+        name: request_ipa_certs
+      vars:
+        cert_owner: minio
 
     - name: Cat key
-      ansible.builtin.shell: cat "{{ certificate_dir }}/minio.key"
+      ansible.builtin.shell: cat "{{ certificate_dir }}/tls.key"
       register: key_out
 
     - name: Cat pem
-      ansible.builtin.shell: cat "{{ certificate_dir }}/minio.pem"
+      ansible.builtin.shell: cat "{{ certificate_dir }}/tls.crt"
       register: pem_out
 
     - name: Set certificate variable

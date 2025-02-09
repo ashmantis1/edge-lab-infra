@@ -1,0 +1,44 @@
+- name: Create IP Tables forwarding rule 
+  ansible.builtin.iptables:
+    table: nat
+    chain: PREROUTING
+    protocol: tcp
+    match: tcp
+    destination_port: 443
+    jump: REDIRECT
+    to_ports: 8200
+
+- name: Template config
+  ansible.builtin.template:
+    src: vault.hcl.j2
+    dest: "/etc/vault.d/vault.hcl"
+  notify: Restart vault
+
+- name: Initialise vault
+  ansible.builtin.include_tasks: init_vault.yaml
+
+- name: Set Vault token variable
+  ansible.builtin.set_fact:
+    vault_token: "{{ vault_init.stdout | from_json | json_query('root_token') }}"
+  when: vault_status.stdout | from_json | json_query('initialized') | bool == false
+
+- name: Vault login
+  ansible.builtin.include_tasks: vault_login.yaml
+  when: vault_status.stdout | from_json | json_query('initialized') | bool == true
+
+- name:  Configure policies
+  ansible.builtin.include_tasks: policies.yaml
+
+- name:  Configure create service accounts
+  ansible.builtin.include_tasks: service_accounts.yaml
+
+- name: Vault login
+  ansible.builtin.include_tasks: vault_login.yaml
+
+- name:  Configure LDAP
+  ansible.builtin.include_tasks: configure_ldap.yaml
+
+- name: Disable root token
+  ansible.builtin.include_tasks: disable_root_token.yaml
+  when: vault_status.stdout | from_json | json_query('initialized') | bool == false
+

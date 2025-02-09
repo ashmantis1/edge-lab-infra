@@ -1,0 +1,28 @@
+- name: Configure LDAP
+  environment:
+    VAULT_ADDR: "{{ vault_address }}"
+    VAULT_TOKEN: "{{ vault_token }}"
+  block:
+    - name: Enable LDAP
+      ansible.builtin.shell: vault auth enable ldap
+      changed_when: out.rc == 0
+      failed_when: out.rc != 0 and out.rc != 2
+
+    - name: Set ldap config
+      ansible.builtin.shell: |
+        vault write auth/ldap/config \
+        url="{{ vault_ldap.url }}" \
+        userattr="{{ vault_ldap.userattr }}" \
+        groupattr="{{ vault_ldap.groupattr }}" \
+        userdn="{{ vault_ldap.userdn }}" \
+        groupdn="{{ vault_ldap.groupdn }}" \
+        binddn="{{ vault_ldap.binddn }}" \
+        bindpass="{{ vault_ldap.bindpass }}" \
+        certificate="{{ vault_ldap.certificate }}" \
+        starttls="{{ vault_ldap.starttls }}"
+
+    - name: Write policy mapping
+      ansible.builtin.shell: "vault write auth/ldap/groups/{{ item.ldap_group }} policies={{ item.policy }}"
+      loop: "{{ vault_ldap.policy_mappings }}"
+
+

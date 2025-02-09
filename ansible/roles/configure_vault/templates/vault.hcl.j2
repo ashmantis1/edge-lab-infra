@@ -1,0 +1,17 @@
+ui = true
+
+# HTTPS listener
+listener "tcp" {
+  address       = "0.0.0.0:8200"
+  tls_cert_file = "{{ certificate_dir }}/tls.crt"
+  tls_key_file  = "{{ certificate_dir }}/tls.key"
+}
+
+storage "s3" {
+    access_key = "{{ vault_s3_access_key }}"
+    secret_key = "{{ vault_s3_secret_key }}"
+    bucket = "{{ vault_s3_bucket }}"
+    region = "{{ vault_s3_region }}"
+    endpoint = "{{ vault_s3_endpoint }}"
+    s3_force_path_style = "true"
+}

@@ -162,6 +162,12 @@ ipa_service_accounts:
     loginshell: "/sbin/nologin"
     passwordexpiration: "2099-01-01 23:59:59"
     password: "{{ vault_ipa_service_accounts.svc_keycloak_bind.password }}"
+  - name: svc-vault-bind
+    first: Vault
+    last: Bind
+    loginshell: "/sbin/nologin"
+    passwordexpiration: "2099-01-01 23:59:59"
+    password: "{{ vault_ipa_service_accounts.svc_vault_bind.password }}"
 
 ipa_permissions:
   - name: "Modify Host - Description"

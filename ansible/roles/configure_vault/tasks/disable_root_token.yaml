@@ -1,0 +1,7 @@
+- name: Configure LDAP
+  environment:
+    VAULT_ADDR: "{{ vault_address }}"
+    VAULT_TOKEN: "{{ vault_token }}"
+  block:
+    - name: Revoke initial root token
+      ansible.builtin.shell: "vault token revoke {{ vault_init.stdout | from_json | json_query('root_token') }}"
