@@ -19,6 +19,7 @@
     dynamic_update: "{{ item.dynamic_update }}"
     skip_overlap_check: "{{ item.skip_overlap_check }}"
     allow_sync_ptr: "{{ item.allow_sync_ptr }}"
+    update_policy: "grant {{ ipaserver_realm }} krb5-self * A; grant {{ ipaserver_realm }} krb5-self * AAAA; grant {{ ipaserver_realm }} krb5-self * SSHFP;{{ item.update_policy }}"
     state: present
     ipaadmin_password: "{{ ipaadmin_password }}"
   loop: "{{ ipa_dns.zones }}"

@@ -1,6 +1,8 @@
 node-image/images
 node-image/temp
 *kubeconfig*
+*hosts/*
+secret.yaml
 # Local .terraform directories
 **/.terraform/*
 

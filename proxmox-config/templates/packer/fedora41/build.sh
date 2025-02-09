@@ -3,7 +3,7 @@
 export BW_SESSION=$(bw unlock --raw)
 credential_file="../../credentials/credentials.packer.hcl"
 
-nodes=( "vm01" "vm02" )
+nodes=( "vm01" "vm02" "vm03" )
 template_id_start=9000
 
 for idx in "${!nodes[@]}"

@@ -4,9 +4,9 @@ ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
 #Node details
 #These are the nodes that the vm's will be deployed to, in sequential order, eg. master01 will be deployed to nodes[0]. Use proxmox node names
 vm:
-  target_nodes: ["vm01","vm02"] # List of nodes to deploy the masters to must match master count (max )
+  target_nodes: ["vm01","vm02","vm03"] # List of nodes to deploy the masters to must match master count (max )
   template: fedora41
-  count: 2
+  count: 3
   primary_count: 1
   cpu: 4
   memory: 4096
@@ -23,6 +23,7 @@ vm:
   network_mask: "{{ network.infra.mask }}"
   network_start_ip: "{{ network.infra.start_ip.freeipa }}"
   description: "FreeIPA hosts deployed by terraform"
+  additional_networks: []
 
 #Hostname details
 service_name: ipa
@@ -67,14 +68,22 @@ ipa_dns:
       dynamic_update: true
       allow_sync_ptr: true
       skip_overlap_check: false
+      update_policy: ""
     - name: k8s.ashman.world
       dynamic_update: true
       allow_sync_ptr: true
       skip_overlap_check: false
+      update_policy: " grant acme-update wildcard * ANY;"
+    - name: apps.ashman.world
+      dynamic_update: true
+      allow_sync_ptr: true
+      skip_overlap_check: false
+      update_policy: " grant acme-update wildcard * ANY;"
     - name: ashman.world
       dynamic_update: true
       allow_sync_ptr: true
       skip_overlap_check: true
+      update_policy: ""
   records:
     - zone_name: infra.ashman.world
       name: qdev01
@@ -116,6 +125,16 @@ ipa_dns:
       record_type: A
       record_value:
         - 10.110.0.150
+    - zone_name: ashman.world
+      name: ipa01.infra
+      record_type: A
+      record_value:
+        - 10.110.0.10
+    - zone_name: ashman.world
+      name: ipa02.infra
+      record_type: A
+      record_value:
+        - 10.110.0.11
           
 
 ipa_service_accounts:
@@ -137,6 +156,12 @@ ipa_service_accounts:
     loginshell: "/sbin/nologin"
     passwordexpiration: "2099-01-01 23:59:59"
     password: "{{ vault_ipa_service_accounts.svc_proxmox_bind.password }}"
+  - name: svc-keycloak-bind
+    first: Keycloak
+    last: Bind
+    loginshell: "/sbin/nologin"
+    passwordexpiration: "2099-01-01 23:59:59"
+    password: "{{ vault_ipa_service_accounts.svc_keycloak_bind.password }}"
 
 ipa_permissions:
   - name: "Modify Host - Description"
@@ -170,6 +195,7 @@ ipa_usergroups:
   - name: infra-admins
   - name: media-users
   - name: media-admins
+  - name: service-accounts
 
 ipa_hostgroups:
   - name: services
@@ -204,6 +230,12 @@ ipa_automember_rules:
     inclusive:
       - key: uid
         expression: "^svc\\-.*\\-infra$"
+  - name: service-accounts
+    description: "Automember condition for service-accounts group"
+    automember_type: group
+    inclusive:
+      - key: uid
+        expression: "^svc\\-.*"
 
 ipa_hbac_rules:
   - name: services_admins_allow

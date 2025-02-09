@@ -25,6 +25,8 @@ node_templates:
     debian12: 9100
   vm02:
     fedora41: 9001
+  vm03:
+    fedora41: 9002
 
 network:
   infra:
@@ -37,4 +39,5 @@ network:
       pihole: 80
       k8s: 110
       minio: 120
+      vault: 130
 

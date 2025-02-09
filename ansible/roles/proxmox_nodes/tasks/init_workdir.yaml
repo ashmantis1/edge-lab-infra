@@ -7,3 +7,8 @@
     state: directory
     path: "{{ workdir }}"
 
+- name: Create workdir terraform directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ workdir }}/terraform"
+

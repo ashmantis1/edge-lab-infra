@@ -6,7 +6,7 @@ metadata:
 spec:
   valuesContent: |-
     kubeProxyReplacement: true
-    k8sServiceHost: {{ rke2_api_ip }}
+    k8sServiceHost: {{ groups['k8s_masters'][0] }}
     k8sServicePort: {{ rke2_apiserver_dest_port }}
     l2announcements:
       enabled: true

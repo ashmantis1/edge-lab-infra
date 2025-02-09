@@ -1,4 +1,5 @@
 # Ansible details
+timezone: "Australia/Melbourne"
 ansible_user: svc-ansible-infra
 ansible_ssh_pass: "{{ vault_ipa_service_accounts.svc_ansible_infra.password }}"
 ansible_become_pass: "{{ vault_ipa_service_accounts.svc_ansible_infra.password }}"
@@ -7,48 +8,29 @@ ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
 #Node details
 #These are the nodes that the vm's will be deployed to, in sequential order, eg. master01 will be deployed to nodes[0]. Use proxmox node names
 vm:
-  target_nodes: ["vm01"] # List of nodes to deploy the masters to must match master count (max )
+  target_nodes: ["vm02"] # List of nodes to deploy the masters to must match master count (max )
   template: fedora41
   count: 1
   primary_count: 1
-  cpu: 2
-  memory: 2048
-  disk_size: 30 # Disk size for root drive of VM in GB
+  cpu: 4
+  memory: 4096
+  disk_size: 100 # Disk size for root drive of VM in GB
   storage_pool: "local-lvm"
   bridge: "vmbr0"
   tag: 4000
   tags: "ipajoined,infra"
-  dns_server: "10.110.0.10 10.110.0.11"
+  dns_server: "10.110.0.10 10.110.0.11 10.110.0.12"
   search_domain: infra.ashman.world
   ssh_pub_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF6leLiXjd46rW2/bKTyFtEBXv8A47Ti0kd49CcexgLy asher@fedora
   network_gateway: "{{ network.infra.gateway }}"
   network_subnet: "{{ network.infra.subnet }}"
   network_mask: "{{ network.infra.mask }}"
-  network_start_ip: "{{ network.infra.start_ip.minio }}"
-  description: "Minio hosts deployed by terraform"
+  network_start_ip: "{{ network.infra.start_ip.vault }}"
+  description: "Vault hosts deployed by terraform"
   additional_networks: []
 
-# Certificate details
-certificate_dir: /opt/certs 
-
 #Hostname details
-service_name: minio
+service_name: vault
 dns_zone: infra.ashman.world
 
-# NFS details
-nfs_mount: storage.infra.ashman.world:/volume1/Infra/MinIO
-nfs_mount_path: /mnt/minio
-
-#Minio Details
-minio_data_dir_path: "{{ nfs_mount_path }}/backend"
-minio_user: minio
-minio_group: minio
-minio_install_server: true
-minio_root_user: admin
-minio_root_password: "{{ vault_minio.root_password }}"
-minio_server_make_datadirs: true
-minio_enable_tls: true
-minio_server_port: 443
-minio_url: "https://{{ service_name }}01.{{ dns_zone }}:{{ minio_server_port }}"
-minio_server_datadirs:
-  - "{{ minio_data_dir_path }}"
+vault_version: "1.18.4"

@@ -8,18 +8,18 @@ ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
 #Node details
 #These are the nodes that the vm's will be deployed to, in sequential order, eg. master01 will be deployed to nodes[0]. Use proxmox node names
 vm:
-  target_nodes: ["vm01","vm02", "vm02"] # List of nodes to deploy the masters to must match master count (max )
+  target_nodes: ["vm01","vm02", "vm03"] # List of nodes to deploy the masters to must match master count (max )
   template: fedora41
   count: 3
   primary_count: 3
-  cpu: 6
-  memory: 4096
-  disk_size: 100 # Disk size for root drive of VM in GB
+  cpu: 8
+  memory: 12228
+  disk_size: 200 # Disk size for root drive of VM in GB
   storage_pool: "local-lvm"
   bridge: "vmbr0"
   tag: 4000
   tags: "ipajoined,infra"
-  dns_server: "10.110.0.10 10.110.0.11"
+  dns_server: "10.110.0.10 10.110.0.11 10.110.0.12"
   search_domain: infra.ashman.world
   ssh_pub_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF6leLiXjd46rW2/bKTyFtEBXv8A47Ti0kd49CcexgLy asher@fedora
   network_gateway: "{{ network.infra.gateway }}"
@@ -27,6 +27,11 @@ vm:
   network_mask: "{{ network.infra.mask }}"
   network_start_ip: "{{ network.infra.start_ip.k8s }}"
   description: "Minio hosts deployed by terraform"
+  additional_networks:
+    - bridge: "svcnet"
+      firewall: false
+      tag: 0
+
 
 #Hostname details
 service_name: kube-infra
@@ -34,8 +39,8 @@ dns_zone: infra.ashman.world
 
 # RKE2 Variables
 rke2_ha_mode: true
-rke2_ha_mode_keepalived: true
-rke2_ha_mode_kubevip: false
+rke2_ha_mode_keepalived: false
+rke2_ha_mode_kubevip: true
 rke2_api_ip: 10.110.0.150
 rke2_kubevip_cloud_provider_enable: false
 rke2_kubevip_svc_enable: false

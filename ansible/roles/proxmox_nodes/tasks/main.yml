@@ -9,6 +9,13 @@
 - name: Initialise working directory
   ansible.builtin.include_tasks: init_workdir.yaml
 
+- name: Template files
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "{{ workdir }}/terraform/{{ item | basename }}"
+  with_fileglob:
+    - ../templates/*.tf
+
 - name: Create Infrastructure
   ansible.builtin.include_tasks: run_terraform.yaml
 

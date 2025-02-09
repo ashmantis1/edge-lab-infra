@@ -1,0 +1,5 @@
+- name: Add gitlab runner repositry
+  ansible.builtin.shell: curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.rpm.sh" | sudo bash
+  become: true
+
+

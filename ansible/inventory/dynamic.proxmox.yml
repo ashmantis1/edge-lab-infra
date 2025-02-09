@@ -28,6 +28,8 @@ groups:
   k8s_workers: "'kube-infrasecondary' in (proxmox_tags_parsed|list)"
   # minio
   minio:  "'minioprimary' in (proxmox_tags_parsed|list)"
+  # Vault
+  vault:  "'vault' in (proxmox_tags_parsed|list)"
 compose:
   ansible_host: proxmox_agent_interfaces[1]["ip-addresses"][0].split('/')[0]
   ansible_ssh_user: asher

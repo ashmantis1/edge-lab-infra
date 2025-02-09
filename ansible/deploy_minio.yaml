@@ -42,6 +42,16 @@
         state: mounted
         fstype: nfs
 
+    - name: Create Minio group
+      ansible.builtin.group:
+        name: "{{ minio_group }}"
+
+    - name: Create Minio user
+      ansible.builtin.user:
+        name: "{{ minio_user }}"
+        groups: "{{ minio_group }}"
+        append: true
+
     - name: Set firewalld rules
       ansible.posix.firewalld:
         port: "{{ item }}"
@@ -93,6 +103,7 @@
     - name: Create minio directory
       ansible.builtin.file:
         path: "{{ minio_data_dir_path }}"
+        recurse: false
         owner: "{{ minio_user }}"
         group: "{{ minio_group }}"
         state: directory

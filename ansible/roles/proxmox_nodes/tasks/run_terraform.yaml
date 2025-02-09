@@ -1,6 +1,6 @@
 - name: Deploy nodes on proxmox
   community.general.terraform: 
-    project_path: "{{ role_path }}/files/terraform"
+    project_path: "{{ workdir }}/terraform"
     state: "{{ state }}"
     force_init: true
     complex_vars: true
