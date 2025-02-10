@@ -41,9 +41,25 @@
 
 - name: Create Service Accounts
   freeipa.ansible_freeipa.ipauser:
+    name: "{{ item.name }}"
+    first: "{{ item.first }}"
+    last: "{{ item.last }}"
+    loginshell: "{{ item.loginshell }}"
+    passwordexpiration: "{{ item.passwordexpiration }}"
+    password: "{{ item.password }}"
     update_password: on_create
-    users: "{{ ipa_service_accounts }}"
     ipaadmin_password: "{{ ipaadmin_password }}"
+  loop: "{{ ipa_service_accounts }}"
+
+- name: Add service account group membership
+  freeipa.ansible_freeipa.ipagroup:
+    name: "{{ item.1 }}"
+    user: "{{ item.0.name }}"
+    state: present
+    ipaadmin_password: "{{ ipaadmin_password }}"
+  loop: "{{ query('subelements', ipa_service_accounts, 'groups', {'skip_missing': True}) }}"
+  loop_control:
+    label: "{{ item.0.name }} added to {{ item.1 }}"
 
 - name: Create IPA permissions
   freeipa.ansible_freeipa.ipapermission:

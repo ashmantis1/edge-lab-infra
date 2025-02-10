@@ -169,6 +169,14 @@ ipa_service_accounts:
     loginshell: "/sbin/nologin"
     passwordexpiration: "2099-01-01 23:59:59"
     password: "{{ vault_ipa_service_accounts.svc_vault_bind.password }}"
+  - name: svc-infrak8s-vault
+    first: Infra
+    last: Vault
+    loginshell: "/sbin/nologin"
+    passwordexpiration: "2099-01-01 23:59:59"
+    password: "{{ vault_ipa_service_accounts.svc_infrak8s_vault.password }}"
+    groups:
+      - vault-infra-secrets-ro
 
 ipa_permissions:
   - name: "Modify Host - Description"
@@ -201,6 +209,8 @@ ipa_services_groups:
   - name: vault-admins
   - name: jellyfin-admins
   - name: jellyfin-users
+  - name: vault-infra-secrets-ro
+  - name: vault-svc-secrets-ro
 
 ipa_usergroups:
   - name: services-admins

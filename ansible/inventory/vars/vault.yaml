@@ -38,6 +38,20 @@ vault_address: "https://{{ service_name }}01.{{ dns_zone }}:8200"
 vault_svc_account:
   name: svc-config-admin
   password: "{{ vault_vault_svc_account_password }}"
+
+vault_policies:
+  - name: infra-ro
+    rules:
+      - path: "secrets/data/infra"
+        capabilities: 
+          - read
+          - list
+  - name: svc-ro
+    rules:
+      - path: "secrets/data/svc"
+        capabilities: 
+          - read
+          - list
 vault_ldap:
   url: "ldaps://ipa01.infra.ashman.world"
   userdn: "cn=users,cn=accounts,dc=infra,dc=ashman,dc=world"
@@ -51,6 +65,8 @@ vault_ldap:
   policy_mappings:
     - ldap_group: vault-admins
       policy: admin
+    - ldap_group: vault-infra-secrets-ro
+      policy: infra-ro
 vault_version: "1.18.4"
 vault_data_directory: /opt/vault
 vault_s3_enabled: true

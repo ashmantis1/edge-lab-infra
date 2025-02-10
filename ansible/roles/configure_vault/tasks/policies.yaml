@@ -8,6 +8,15 @@
         path: /etc/vault.d/policies
         state: directory
       
+    - name: Template policies
+      ansible.builtin.template:
+        src: policy.hcl.j2
+        dest: "/etc/vault.d/policies/{{ item.name }}.hcl"
+        mode: 0644
+        owner: vault
+        group: vault
+      loop: "{{ vault_policies }}"
+
     - name: Create vault policies
       ansible.builtin.copy:
         src: "policy/"
