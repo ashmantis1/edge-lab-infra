@@ -42,17 +42,18 @@ vault_ldap:
   url: "ldaps://ipa01.infra.ashman.world"
   userdn: "cn=users,cn=accounts,dc=infra,dc=ashman,dc=world"
   groupdn: "cn=groups,cn=accounts,dc=infra,dc=ashman,dc=world"
-  groupattr: "cn"
+  groupattr: "memberOf"
   userattr: "uid"
   binddn: "uid=svc-vault-bind,cn=users,cn=accounts,dc=infra,dc=ashman,dc=world"
   bindpass: "{{ vault_ipa_service_accounts.svc_vault_bind.password }}"
   certificate: "@/etc/ipa/ca.crt"
   starttls: true
   policy_mappings:
-    - ldap_group: vault_admins
+    - ldap_group: vault-admins
       policy: admin
 vault_version: "1.18.4"
 vault_data_directory: /opt/vault
+vault_s3_enabled: true
 vault_s3_access_key: "{{ vault_vault_s3.access_key }}"
 vault_s3_secret_key: "{{ vault_vault_s3.secret_key }}"
 vault_s3_bucket: vault

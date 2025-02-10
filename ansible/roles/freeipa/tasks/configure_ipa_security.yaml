@@ -12,9 +12,3 @@
       - displayname
     state: present
     ipaadmin_password: "{{ ipaadmin_password }}"
-
-- name: Disable Default Allow All rule
-  freeipa.ansible_freeipa.ipahbacrule:
-    name: "allow_all"
-    state: disabled
-    ipaadmin_password: "{{ ipaadmin_password }}"

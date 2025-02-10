@@ -39,6 +39,7 @@ ipaserver_allow_zone_overlap: true
 ipaserver_random_serial_numbers: true
 ipaadmin_password: "{{ vault_ipaadmin_password }}"
 ipadm_password: "{{ vault_ipadm_password }}"
+ipaserver_no_hbac_allow: true
 
 # IPA Client
 ipaclient_force_join: true
@@ -195,12 +196,26 @@ ipa_roles:
     privilege:
       - 'Host Enrollment'
 
+ipa_services_groups:
+  - name: gitlab-admins
+  - name: vault-admins
+  - name: jellyfin-admins
+  - name: jellyfin-users
+
 ipa_usergroups:
   - name: services-admins
-  - name: k8s-admins
+    groups:
+      - gitlab-admins
   - name: infra-admins
+    groups:
+      - vault-admins
+  - name: k8s-admins
   - name: media-users
+    groups:
+      - jellyfin-users
   - name: media-admins
+    groups:
+      - jellyfin-admins
   - name: service-accounts
 
 ipa_hostgroups:

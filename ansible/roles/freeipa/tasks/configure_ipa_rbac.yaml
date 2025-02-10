@@ -5,10 +5,28 @@
     ipaadmin_password: "{{ ipaadmin_password }}"
   loop: "{{ ipa_hostgroups }}"
 
+- name: Create Services User Groups
+  freeipa.ansible_freeipa.ipagroup:
+    groups: "{{ ipa_services_groups }}"
+    ipaadmin_password: "{{ ipaadmin_password }}"
+    
 - name: Create IPA User Groups
   freeipa.ansible_freeipa.ipagroup:
-    groups: "{{ ipa_usergroups }}"
+    name: "{{ item.name }}"
+    description: "{{ item.description | default('Created by Ansible') }}"
+    state: present
     ipaadmin_password: "{{ ipaadmin_password }}"
+  loop: "{{ ipa_usergroups }}"
+
+- name: Add group membership
+  freeipa.ansible_freeipa.ipagroup:
+    name: "{{ item.1 }}"
+    group: "{{ item.0.name }}"
+    state: present
+    ipaadmin_password: "{{ ipaadmin_password }}"
+  loop: "{{ query('subelements', ipa_usergroups, 'groups', {'skip_missing': True}) }}"
+  loop_control:
+    label: "{{ item.0.name }} added to {{ item.1 }}"
 
 - name: Create automember rules
   freeipa.ansible_freeipa.ipaautomember:

@@ -7,6 +7,7 @@ listener "tcp" {
   tls_key_file  = "{{ certificate_dir }}/tls.key"
 }
 
+{% if vault_s3_enabled %}
 storage "s3" {
     access_key = "{{ vault_s3_access_key }}"
     secret_key = "{{ vault_s3_secret_key }}"
@@ -15,3 +16,4 @@ storage "s3" {
     endpoint = "{{ vault_s3_endpoint }}"
     s3_force_path_style = "true"
 }
+{% endif %}
