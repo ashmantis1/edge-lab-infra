@@ -1,0 +1,23 @@
+- name: Set LDAP Configuration attributes
+  ansible.builtin.shell: |
+    {{ mc_command }} idp ldap add {{ minio_alias }} \
+    server_addr="{{ minio_ldap.server_addr }}" \
+    srv_record_name="{{ minio_ldap.srv_record_name | default('') }}" \
+    lookup_bind_dn="{{ minio_ldap.lookup_bind_dn }}" \
+    lookup_bind_password="{{ minio_ldap.lookup_bind_password }}" \
+    user_dn_search_base_dn="{{ minio_ldap.user_dn_search_base_dn | join(';') }}" \
+    user_dn_search_filter="{{ minio_ldap.user_dn_search_filter }}" \
+    user_dn_attributes="{{ minio_ldap.user_dn_attributes | join(',') }}" \
+    group_search_filter="{{ minio_ldap.group_search_filter }}" \
+    group_search_base_dn="{{ minio_ldap.group_search_base_dn | join(';') }}" \
+    tls_skip_verify="{{ minio_ldap.tls_skip_verify | default('off') }}" \
+    server_insecure="{{ minio_ldap.server_insecure | default('off') }}" \
+    server_starttls="{{ minio_ldap.server_starttls | default('off') }}" \
+    comment="{{ minio_ldap.comment | default('') }}"
+  register: out
+  ignore_errors: true
+
+
+- name: Set Minio policy mappings
+  ansible.builtin.shell: "{{ mc_command }} idp ldap policy attach {{ minio_alias }} {{ item.policy }} --group='{{ item.group }}'"
+  loop: "{{ minio_ldap.policy_mappings }}"

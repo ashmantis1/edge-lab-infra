@@ -42,13 +42,13 @@ vault_svc_account:
 vault_policies:
   - name: infra-ro
     rules:
-      - path: "secrets/data/infra"
+      - path: "infra/*"
         capabilities: 
           - read
           - list
   - name: svc-ro
     rules:
-      - path: "secrets/data/svc"
+      - path: "svc/*"
         capabilities: 
           - read
           - list

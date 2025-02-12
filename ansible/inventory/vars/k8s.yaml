@@ -16,21 +16,21 @@ vm:
   memory: 12228
   disk_size: 200 # Disk size for root drive of VM in GB
   storage_pool: "local-lvm"
-  bridge: "vmbr0"
-  tag: 4000
+  bridge: "svcnet"
+  tag: 0
   tags: "ipajoined,infra"
   dns_server: "10.110.0.10 10.110.0.11 10.110.0.12"
   search_domain: infra.ashman.world
   ssh_pub_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF6leLiXjd46rW2/bKTyFtEBXv8A47Ti0kd49CcexgLy asher@fedora
-  network_gateway: "{{ network.infra.gateway }}"
-  network_subnet: "{{ network.infra.subnet }}"
-  network_mask: "{{ network.infra.mask }}"
-  network_start_ip: "{{ network.infra.start_ip.k8s }}"
-  description: "Minio hosts deployed by terraform"
-  additional_networks:
-    - bridge: "svcnet"
-      firewall: false
-      tag: 0
+  network_gateway: "{{ network.svc.gateway }}"
+  network_subnet: "{{ network.svc.subnet }}"
+  network_mask: "{{ network.svc.mask }}"
+  network_start_ip: "{{ network.svc.start_ip.k8s }}"
+  description: "K8S hosts deployed by terraform"
+  additional_networks: []
+  #    - bridge: "svcnet"
+  #      firewall: false
+  #      tag: 0
 
 
 #Hostname details
@@ -41,7 +41,7 @@ dns_zone: infra.ashman.world
 rke2_ha_mode: true
 rke2_ha_mode_keepalived: false
 rke2_ha_mode_kubevip: true
-rke2_api_ip: 10.110.0.150
+rke2_api_ip: 10.140.2.0
 rke2_kubevip_cloud_provider_enable: false
 rke2_kubevip_svc_enable: false
 rke2_version: v1.32.0+rke2r1 
@@ -68,3 +68,11 @@ rke2_agents_group_name: k8s_workers
 rke2_download_kubeconf: true
 rke2_download_kubeconf_path: /home/asher/.kube
 rke2_download_kubeconf_file_name: rke2-kubeconfig.yaml
+
+rke2_interface: eth0
+bind_address: "{{ hostvars[inventory_hostname]['ansible_' + rke2_interface]['ipv4']['address'] }}"
+
+rke2_server_options:
+  - "node-ip: {{ bind_address }}"
+  #rke2_agent_options:
+  #  - "node-ip: {{ rke2_bind_address }}"

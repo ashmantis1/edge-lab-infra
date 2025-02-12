@@ -169,6 +169,12 @@ ipa_service_accounts:
     loginshell: "/sbin/nologin"
     passwordexpiration: "2099-01-01 23:59:59"
     password: "{{ vault_ipa_service_accounts.svc_vault_bind.password }}"
+  - name: svc-minio-bind
+    first: Minio
+    last: Bind
+    loginshell: "/sbin/nologin"
+    passwordexpiration: "2099-01-01 23:59:59"
+    password: "{{ vault_ipa_service_accounts.svc_minio_bind.password }}"
   - name: svc-infrak8s-vault
     first: Infra
     last: Vault
@@ -209,6 +215,8 @@ ipa_services_groups:
   - name: vault-admins
   - name: jellyfin-admins
   - name: jellyfin-users
+  - name: minio-admins
+  - name: keycloak-admins
   - name: vault-infra-secrets-ro
   - name: vault-svc-secrets-ro
 
@@ -219,6 +227,8 @@ ipa_usergroups:
   - name: infra-admins
     groups:
       - vault-admins
+      - minio-admins
+      - keycloak-admins
   - name: k8s-admins
   - name: media-users
     groups:

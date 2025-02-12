@@ -8,6 +8,11 @@
     jump: REDIRECT
     to_ports: 8200
 
+- name: Save current state of the firewall in system file
+  community.general.iptables_state:
+    state: saved
+    path: /etc/sysconfig/iptables
+
 - name: Template config
   ansible.builtin.template:
     src: vault.hcl.j2

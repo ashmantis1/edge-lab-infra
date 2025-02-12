@@ -1,0 +1,3 @@
+
+- name: Configure LDAP settings
+  ansible.builtin.include_tasks: configure_ldap.yaml

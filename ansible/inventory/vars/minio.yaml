@@ -52,3 +52,24 @@ minio_server_port: 443
 minio_url: "https://{{ service_name }}01.{{ dns_zone }}:{{ minio_server_port }}"
 minio_server_datadirs:
   - "{{ minio_data_dir_path }}"
+#minio_ldap:
+#  server_addr: "ipa01.infra.ashman.world:636"
+#  srv_record_name: ""  # Can be "ldap", "ldaps", or "on"
+#  lookup_bind_dn: "uid=svc-minio-bind,cn=users,cn=accounts,dc=infra,dc=ashman,dc=world"
+#  lookup_bind_password: "{{ vault_ipa_service_accounts.svc_minio_bind.password }}"
+#  user_dn_search_base_dn: 
+#    - "cn=users,cn=accounts,dc=infra,dc=ashman,dc=world"
+#  user_dn_search_filter: "(uid=%s)"
+#  user_dn_attributes: 
+#    - cn
+#  group_search_filter: "(member=%s)"
+#  group_search_base_dn: 
+#    - "cn=groups,cn=accounts,dc=infra,dc=ashman,dc=world"
+#  tls_skip_verify: "off"
+#  server_insecure: "off"
+#  server_starttls: "off"
+#  comment: "FreeIPA LDAP"
+#  policy_mappings:
+#    - policy: consoleAdmin
+#      group: "cn=minio-admins,cn=groups,cn=accounts,dc=infra,dc=ashman,dc=world"
+  #

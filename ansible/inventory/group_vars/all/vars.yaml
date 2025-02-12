@@ -29,6 +29,13 @@ node_templates:
     fedora41: 9002
 
 network:
+  svc:
+    subnet: "10.140.0.0"
+    mask: "22"
+    gateway: "10.140.0.1"
+    # Super rough IPAM lol
+    start_ip:
+      k8s: 266
   infra:
     subnet: "10.110.0.0"
     mask: "24"

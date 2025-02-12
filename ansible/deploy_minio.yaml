@@ -94,3 +94,10 @@
       ansible.builtin.include_role:
         name: ricsanfre.minio
 
+        #    - name: Configure
+        #      tags: configure
+        #      block:
+        #      - name: Configure Minio
+        #        ansible.builtin.include_role:
+        #          name: configure_minio
+        #
