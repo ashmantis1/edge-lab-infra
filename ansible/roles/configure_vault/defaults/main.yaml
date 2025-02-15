@@ -2,3 +2,6 @@ vault_address: ""
 vault_key_portions: 1
 vault_key_threshold: 1
 vault_s3_enabled: false
+vault_forward_port: 443
+
+iptables_config_path: /etc/sysconfig/iptables

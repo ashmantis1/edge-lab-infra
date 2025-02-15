@@ -67,6 +67,8 @@ vault_ldap:
       policy: admin
     - ldap_group: vault-infra-secrets-ro
       policy: infra-ro
+    - ldap_group: vault-svc-secrets-ro
+      policy: svc-ro
 vault_version: "1.18.4"
 vault_data_directory: /opt/vault
 vault_s3_enabled: true

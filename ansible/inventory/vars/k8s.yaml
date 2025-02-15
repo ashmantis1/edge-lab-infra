@@ -55,6 +55,12 @@ rke2_custom_manifests:
 rke2_cni:
   - multus
   - cilium
+
+rke2_kube_apiserver_args:
+ - --oidc-client-id=kubelogin
+ - --oidc-groups-claim=groups
+ - --oidc-issuer-url=https://dex.infra.k8s.ashman.world
+ - --oidc-username-claim=email
 disable_kube_proxy: true
 #k8s_node_label:
 #  - node-access: minimum-access

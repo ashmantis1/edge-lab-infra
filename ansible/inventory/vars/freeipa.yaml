@@ -183,6 +183,14 @@ ipa_service_accounts:
     password: "{{ vault_ipa_service_accounts.svc_infrak8s_vault.password }}"
     groups:
       - vault-infra-secrets-ro
+  - name: svc-svck8s-vault
+    first: Svc
+    last: Vault
+    loginshell: "/sbin/nologin"
+    passwordexpiration: "2099-01-01 23:59:59"
+    password: "{{ vault_ipa_service_accounts.svc_svck8s_vault.password }}"
+    groups:
+      - vault-svc-secrets-ro
 
 ipa_permissions:
   - name: "Modify Host - Description"
